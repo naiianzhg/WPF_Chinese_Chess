@@ -1,0 +1,66 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon />
+    <StartupObject />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Display\**" />
+    <EmbeddedResource Remove="Display\**" />
+    <None Remove="Display\**" />
+    <Page Remove="Display\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Images\BlackAdvisor.png" />
+    <None Remove="Images\BlackCannon.png" />
+    <None Remove="Images\BlackElephant.png" />
+    <None Remove="Images\BlackGeneral.png" />
+    <None Remove="Images\BlackHorse.png" />
+    <None Remove="Images\BlackRook.png" />
+    <None Remove="Images\BlackSoldier.png" />
+    <None Remove="Images\ChosenBox.png" />
+    <None Remove="Images\EatBox.png" />
+    <None Remove="Images\EatenMoveBox.png" />
+    <None Remove="Images\logo.png" />
+    <None Remove="Images\panel.png" />
+    <None Remove="Images\RedAdvisor.png" />
+    <None Remove="Images\RedCannon.png" />
+    <None Remove="Images\RedElephant.png" />
+    <None Remove="Images\RedGeneral.png" />
+    <None Remove="Images\RedHorse.png" />
+    <None Remove="Images\RedRook.png" />
+    <None Remove="Images\RedSoldier.png" />
+    <None Remove="Images\ValidMoveBox.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\BlackAdvisor.png" />
+    <Resource Include="Images\BlackCannon.png" />
+    <Resource Include="Images\BlackElephant.png" />
+    <Resource Include="Images\BlackGeneral.png" />
+    <Resource Include="Images\BlackHorse.png" />
+    <Resource Include="Images\BlackRook.png" />
+    <Resource Include="Images\BlackSoldier.png" />
+    <Resource Include="Images\logo.png" />
+    <Resource Include="Images\panel.png" />
+    <Resource Include="Images\RedAdvisor.png" />
+    <Resource Include="Images\RedCannon.png" />
+    <Resource Include="Images\RedElephant.png" />
+    <Resource Include="Images\RedGeneral.png" />
+    <Resource Include="Images\RedHorse.png" />
+    <Resource Include="Images\RedRook.png" />
+    <Resource Include="Images\RedSoldier.png" />
+    <Resource Include="Images\ValidMoveBox.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Model\" />
+    <Folder Include="Control\" />
+  </ItemGroup>
+
+</Project>
