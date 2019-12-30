@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ChineseChess_G1"
         mc:Ignorable="d"
-        Icon="/Images/logo.png" Title="Chinese Chess - Group 1" Height="620" Width="720" ResizeMode="CanMinimize">
+        Icon="/Images/logo.png" Title="WPF Chinese Chess - Group 1" SizeToContent="Height" Width="860" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
     <Grid>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Left">
             <!--The chess board layout-->
@@ -17,12 +17,13 @@
             </Grid>
             
             <!--Messages and options layout-->
-            <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                <TextBlock Name="txtblkCurrentColor" FontSize="20" TextAlignment="Center" Visibility="Hidden"/>
+            <StackPanel Orientation="Vertical" VerticalAlignment="Center" Height="500">
+                <TextBlock Name="txtblkBlack" Text="Black's move" VerticalAlignment="Top" FontSize="20" TextAlignment="Center" Visibility="Hidden"/>
                 <Button Name="btnStart" FontSize="20" Content="Start" Click="btnStart_Click"/>
                 <Button Name="btnRegret" FontSize="20" Content="Regret" Click="btnRegret_Click" Visibility="Hidden"/>
-                <Button Name="btnRestart" FontSize="20" Content="Restart" Click="btnRestart_Click" Visibility="Hidden" />
+                <Button Name="btnRestart" FontSize="20" Content="Restart" Click="btnRestart_Click" Visibility="Hidden"/>
                 <TextBlock Name="txtblkMessage" Width="100" FontSize="20" TextAlignment="Center" Text="Message" TextWrapping="Wrap"/>
+                <TextBlock Name="txtblkRed" Text="Red's move" VerticalAlignment="Bottom" FontSize="20" TextAlignment="Center" Visibility="Hidden"/>
             </StackPanel>
         </StackPanel>
     </Grid>

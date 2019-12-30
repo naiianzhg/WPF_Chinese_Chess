@@ -110,7 +110,7 @@ namespace ChineseChess.Model
         // Remove last original location
         public static void removeLastOriLocation()
         {
-            lastOriLocationList.Remove(lastOriLocationList.Last());
+            if (lastOriLocationList.Count > 0) lastOriLocationList.RemoveAt(lastOriLocationList.Count - 1);
         }
 
         // After enter the destination location, save it
@@ -131,7 +131,7 @@ namespace ChineseChess.Model
         // Remove last destination location
         public static void removeLastDestLocation()
         {
-            lastDestLocationList.Remove(lastDestLocationList.Last());
+            if (lastDestLocationList.Count > 0) lastDestLocationList.RemoveAt(lastDestLocationList.Count - 1);
         }
 
         // Before eating any piece, store the pice
@@ -149,7 +149,7 @@ namespace ChineseChess.Model
         // Remove last original location
         public static void removeLastEatenPiece()
         {
-            lastEatenPieceList.Remove(lastEatenPieceList.Last());
+            if (lastEatenPieceList.Count > 0) lastEatenPieceList.RemoveAt(lastEatenPieceList.Count - 1);
         }
 
         // Return the position of the Red General

@@ -15,6 +15,7 @@ namespace ChineseChess.Control
             Board.iniChessBoard();
         }
 
+        // TODO
         // return a bool[] where bool[0] is the checked situation for black, whereas bool[1] for red
         public static bool[] isChecked()
         {
@@ -55,6 +56,7 @@ namespace ChineseChess.Control
             return chked;
         }
 
+        //TODO
         // when one team is checked, if all valid moves of all the pieces from this team are not able to avoid cheked, it is a checkmate
         public static bool isCheckmate()
         {
@@ -139,22 +141,26 @@ namespace ChineseChess.Control
         // Regret move
         public static void regret()
         {
-            // if the player still has chances for regret
-            if (Board.regretAmount[Board.currentColour % 2] > 0 && Board.lastOriLocationList.Count > 0 && Board.lastDestLocationList.Count > 0)
-            {
-                // Move back the piece
-                PiecesHandler.tracelessMoveTo(Board.getLastDestLocation(), Board.getLastOriLocation());
-                // If there is an eaten piece, put it back to the board, else put null
-                Board.pieces[Board.getLastDestLocation()[0], Board.getLastDestLocation()[1]] = Board.getLastEatenPiece();
-                // Remove the last element of lastOriLocationList, lastDestLocationList and lastEatenPieceList after regret
-                Board.removeLastOriLocation();
-                Board.removeLastDestLocation();
-                Board.removeLastEatenPiece();
-                // Reduce of regret chance by 1
-                Board.regretAmount[Board.currentColour % 2]--;
-                // After regret, the current colour change back
-                Board.changeTurn();
-            }
+            // If there is no pieces available for regreting
+            if (Board.lastDestLocationList.Count == 0)
+                throw new Exception("You have no move to regret");
+            // If there is no more chances for the player to regret
+            if (Board.regretAmount[Board.currentColour % 2] <= 0)
+                throw new Exception("You have no chance to regret anymore");
+
+            // else the player still has chances for regret
+            // Move back the piece
+            PiecesHandler.tracelessMoveTo(Board.getLastDestLocation(), Board.getLastOriLocation());
+            // If there is an eaten piece, put it back to the board, else put null
+            Board.pieces[Board.getLastDestLocation()[0], Board.getLastDestLocation()[1]] = Board.getLastEatenPiece();
+            // Remove the last element of lastOriLocationList, lastDestLocationList and lastEatenPieceList after regret
+            Board.removeLastOriLocation();
+            Board.removeLastDestLocation();
+            Board.removeLastEatenPiece();
+            // Reduce of regret chance by 1
+            Board.regretAmount[Board.currentColour % 2]--;
+            // Change back the current colour
+            Board.changeTurn();
         }
     }
 }

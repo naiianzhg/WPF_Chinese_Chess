@@ -27,7 +27,10 @@
     <None Remove="Images\EatBox.png" />
     <None Remove="Images\EatenMoveBox.png" />
     <None Remove="Images\logo.png" />
+    <None Remove="Images\logo_1.png" />
+    <None Remove="Images\OriLocationBox.png" />
     <None Remove="Images\panel.png" />
+    <None Remove="Images\Panel_1.png" />
     <None Remove="Images\RedAdvisor.png" />
     <None Remove="Images\RedCannon.png" />
     <None Remove="Images\RedElephant.png" />
@@ -47,6 +50,7 @@
     <Resource Include="Images\BlackRook.png" />
     <Resource Include="Images\BlackSoldier.png" />
     <Resource Include="Images\logo.png" />
+    <Resource Include="Images\OriLocationBox.png" />
     <Resource Include="Images\panel.png" />
     <Resource Include="Images\RedAdvisor.png" />
     <Resource Include="Images\RedCannon.png" />

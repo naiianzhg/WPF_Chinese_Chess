@@ -15,7 +15,6 @@ C:\Users\ZHONG Yiyang\source\repos\ChineseChess_G1\ChineseChess_G1\obj\Debug\net
 C:\Users\ZHONG Yiyang\source\repos\ChineseChess_G1\ChineseChess_G1\obj\Debug\netcoreapp3.1\ChineseChess_G1.AssemblyInfo.cs
 C:\Users\ZHONG Yiyang\source\repos\ChineseChess_G1\ChineseChess_G1\obj\Debug\netcoreapp3.1\ChineseChess_G1.dll
 C:\Users\ZHONG Yiyang\source\repos\ChineseChess_G1\ChineseChess_G1\obj\Debug\netcoreapp3.1\ChineseChess_G1.pdb
-C:\Users\ZHONG Yiyang\Documents\ZHONG\Ecole\Y3\cs\ChineseChess_G1\ChineseChess_G1\obj\Debug\netcoreapp3.1\ChineseChess_G1.csprojAssemblyReference.cache
 C:\Users\ZHONG Yiyang\Documents\ZHONG\Ecole\Y3\cs\ChineseChess_G1\ChineseChess_G1\obj\Debug\netcoreapp3.1\MainWindow.g.cs
 C:\Users\ZHONG Yiyang\Documents\ZHONG\Ecole\Y3\cs\ChineseChess_G1\ChineseChess_G1\obj\Debug\netcoreapp3.1\App.g.cs
 C:\Users\ZHONG Yiyang\Documents\ZHONG\Ecole\Y3\cs\ChineseChess_G1\ChineseChess_G1\obj\Debug\netcoreapp3.1\ChineseChess_G1_MarkupCompile.cache
@@ -32,3 +31,4 @@ C:\Users\ZHONG Yiyang\Documents\ZHONG\Ecole\Y3\cs\ChineseChess_G1\ChineseChess_G
 C:\Users\ZHONG Yiyang\Documents\ZHONG\Ecole\Y3\cs\ChineseChess_G1\ChineseChess_G1\obj\Debug\netcoreapp3.1\ChineseChess_G1.AssemblyInfoInputs.cache
 C:\Users\ZHONG Yiyang\Documents\ZHONG\Ecole\Y3\cs\ChineseChess_G1\ChineseChess_G1\obj\Debug\netcoreapp3.1\ChineseChess_G1.AssemblyInfo.cs
 C:\Users\ZHONG Yiyang\Documents\ZHONG\Ecole\Y3\cs\ChineseChess_G1\ChineseChess_G1\obj\Debug\netcoreapp3.1\ChineseChess_G1.dll
+C:\Users\ZHONG Yiyang\Documents\ZHONG\Ecole\Y3\cs\ChineseChess_G1\ChineseChess_G1\obj\Debug\netcoreapp3.1\ChineseChess_G1.csprojAssemblyReference.cache
