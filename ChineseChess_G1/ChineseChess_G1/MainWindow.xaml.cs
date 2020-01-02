@@ -144,15 +144,17 @@ namespace ChineseChess_G1
         {
             if (Board.currentColour % 2 == 0)
             {
-                txtblkBlack.SetValue(VisibilityProperty, Visibility.Visible);
-                txtblkRed.SetValue(VisibilityProperty, Visibility.Hidden);
+                txtblkCrrClr.Text = "Black's Move";
+                txtblkCrrClr.Background = Brushes.Black;
+                txtblkCrrClr.SetValue(VisibilityProperty, Visibility.Visible);
             }
             else
             {
-                txtblkRed.SetValue(VisibilityProperty, Visibility.Visible);
-                txtblkBlack.SetValue(VisibilityProperty, Visibility.Hidden);
+                txtblkCrrClr.Text = "Red's Move";
+                txtblkCrrClr.Background = Brushes.Red;
+                txtblkCrrClr.SetValue(VisibilityProperty, Visibility.Visible);
             }
-            }
+        }
 
         // Start button click event handle
         private void btnStart_Click(object sender, RoutedEventArgs e)
@@ -168,8 +170,7 @@ namespace ChineseChess_G1
                 $"Black's Regret({Board.regretAmount[Board.currentColour % 2]})";
             // apprear the current colour textblock, regret button, restart button
             // as well as disappear the start button
-            txtblkRed.SetValue(VisibilityProperty, Visibility.Visible);
-            btnStart.SetValue(VisibilityProperty, Visibility.Hidden);
+            btnStart.SetValue(VisibilityProperty, Visibility.Collapsed);
             btnRestart.SetValue(VisibilityProperty, Visibility.Visible);
             btnRegret.SetValue(VisibilityProperty, Visibility.Visible);
             // redraw all the pieces in the board on the panel
@@ -179,48 +180,55 @@ namespace ChineseChess_G1
         // Restart button click event handle
         private void btnRestart_Click(object sender, RoutedEventArgs e)
         {
-            // Re-initialization of the game data only
-            GameRules.iniGame();
-            // Re-draw the current colour
-            redrawCurrenColour();
-            // Re-draw the chances left on the regret button, if currently it is black's turn, the regret chance will be red's
-            btnRegret.Content =
-                Board.currentColour % 2 == 0 ?
-                $"Red's Regret({Board.regretAmount[Board.currentColour % 2]})" :
-                $"Black's Regret({Board.regretAmount[Board.currentColour % 2]})";
-            // Re-draw all the pieces in the board on the panel
-            redrawPieces();
-        }
-
-        // Regret button click event handle
-        private void btnRegret_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                GameRules.regret();
-                // If the player regrets from the checkmate situation, change the cursor back to defaut
-                chessPanel.Cursor = Cursors.Arrow;
-                // And set game status to TO_CHOOSE
-                changeGameStatus(GameStatus.TO_CHOOSE);
-
+            if (MessageBox.Show("Are you sure?", "Restart Game", MessageBoxButton.YesNo,MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {             
+                // Re-initialization of the game data only
+                GameRules.iniGame();
+                // Re-draw the current colour
                 redrawCurrenColour();
                 // Re-draw the chances left on the regret button, if currently it is black's turn, the regret chance will be red's
                 btnRegret.Content =
                     Board.currentColour % 2 == 0 ?
                     $"Red's Regret({Board.regretAmount[Board.currentColour % 2]})" :
                     $"Black's Regret({Board.regretAmount[Board.currentColour % 2]})";
+                // Re-draw all the pieces in the board on the panel
                 redrawPieces();
-                // Redraw the origin location indication
-                if (Board.lastOriLocationList.Count > 0)
+            }
+        }
+
+        // Regret button click event handle
+        private void btnRegret_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("Are you sure?", "Regret Chess", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                try
                 {
-                    Image oriLocationImg = (Image)chessPanel.Children[9 * Board.getLastOriLocation()[0] + Board.getLastOriLocation()[1]];
-                    oriLocationImg.Source = new BitmapImage(new Uri("/Images/OriLocationBox.png", UriKind.RelativeOrAbsolute));
+                    GameRules.regret();
+                    // If the player regrets from the checkmate situation, change the cursor back to defaut
+                    chessPanel.Cursor = Cursors.Arrow;
+                    // And set game status to TO_CHOOSE
+                    changeGameStatus(GameStatus.TO_CHOOSE);
+
+                    redrawCurrenColour();
+                    // Re-draw the chances left on the regret button, if currently it is black's turn, the regret chance will be red's
+                    btnRegret.Content =
+                        Board.currentColour % 2 == 0 ?
+                        $"Red's Regret({Board.regretAmount[Board.currentColour % 2]})" :
+                        $"Black's Regret({Board.regretAmount[Board.currentColour % 2]})";
+                    redrawPieces();
+                    // Redraw the origin location indication
+                    if (Board.lastOriLocationList.Count > 0)
+                    {
+                        Image oriLocationImg = (Image)chessPanel.Children[9 * Board.getLastOriLocation()[0] + Board.getLastOriLocation()[1]];
+                        oriLocationImg.Source = new BitmapImage(new Uri("/Images/OriLocationBox.png", UriKind.RelativeOrAbsolute));
+                    }
+                }
+                catch (Exception excp)
+                {
+                    MessageBox.Show(excp.Message, "Invalid operation", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-            catch (Exception excp)
-            {
-                MessageBox.Show(excp.Message, "Invalid operation", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+
         }
 
         // Pieces/Valid move images click event handle
@@ -317,6 +325,22 @@ namespace ChineseChess_G1
                     oriLocationImg.Source = new BitmapImage(new Uri("/Images/OriLocationBox.png", UriKind.RelativeOrAbsolute));
                 }
             }
+        }
+
+        // TODO
+        private void btnPlay_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnChoose_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

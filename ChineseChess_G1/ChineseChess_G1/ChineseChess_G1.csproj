@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Images\background.jpg" />
     <None Remove="Images\BlackAdvisor.png" />
     <None Remove="Images\BlackCannon.png" />
     <None Remove="Images\BlackElephant.png" />
@@ -42,6 +43,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Images\background.jpg" />
     <Resource Include="Images\BlackAdvisor.png" />
     <Resource Include="Images\BlackCannon.png" />
     <Resource Include="Images\BlackElephant.png" />
