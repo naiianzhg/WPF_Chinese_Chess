@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
+using Microsoft.Win32;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -338,9 +340,14 @@ namespace ChineseChess_G1
 
         }
 
-        private void btnChoose_Click(object sender, RoutedEventArgs e)
+        private void btnOpen_Click(object sender, RoutedEventArgs e)
         {
-
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+            openFileDialog.InitialDirectory = @"c:\Users\";
+            if (openFileDialog.ShowDialog() == true)
+                txtblkUrl.SetValue(VisibilityProperty, Visibility.Visible);
+                txtblkUrl.Text = openFileDialog.FileName;
         }
     }
 }

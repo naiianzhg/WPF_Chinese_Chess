@@ -20,7 +20,7 @@
             </Grid>
             
             <!--Messages and options layout-->
-            <StackPanel Name="Sidebar" Height="580" Margin="25,0,0,0">
+            <StackPanel Name="Sidebar" Height="580" Width="200" Margin="25,0,0,0">
                 <StackPanel Name="GameControl">
                     <Border BorderBrush="Black" BorderThickness="0,2,0,0" Margin="0,0,0,10" Width="170"/>
                     <TextBlock Name="GameControlTitle" Text="Founction Buttons: " FontSize="20" FontStyle="Italic" Margin="0,0,0,10"/>
@@ -108,7 +108,7 @@
                             </Style>
                         </Button.Style>
                     </Button>
-                    <Button Name="btnChoose" FontSize="20" FontWeight="Bold" Background="Blue" Foreground="White" Content="Choose Manual" Click="btnChoose_Click" Margin="0,0,0,10" Visibility="Visible">
+                    <Button Name="btnOpen" FontSize="20" FontWeight="Bold" Background="Blue" Foreground="White" Content="Open Manual" Click="btnOpen_Click" Margin="0,0,0,10" Visibility="Visible">
                         <Button.Style>
                             <Style TargetType="{x:Type Button}">
                                 <Style.Triggers>
@@ -124,6 +124,8 @@
                             </Style>
                         </Button.Style>
                     </Button>
+                    <TextBlock Name="txtblkUrlTitle" FontSize="15" Foreground="Blue" Text="Manual URL:" Margin="0,0,0,10"/>
+                    <TextBlock Name="txtblkUrl" FontSize="12" FontStyle="Italic" Foreground="Blue" TextWrapping="Wrap"  Margin="5,0,5,10" Visibility="Collapsed"/>
                 </StackPanel>
                 <Border BorderBrush="Black" BorderThickness="0,2,0,0" Margin="0,0,0,10" Width="170"/>
                 <TextBlock Text="Message:" FontSize="20"/>
