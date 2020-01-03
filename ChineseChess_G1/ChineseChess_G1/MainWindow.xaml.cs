@@ -24,7 +24,8 @@ namespace ChineseChess_G1
     {
         TO_CHOOSE,
         TO_MOVE,
-        GAME_OVER
+        GAME_OVER,
+        MANUAL_MODE
     }
 
     /// <summary>
@@ -213,10 +214,8 @@ namespace ChineseChess_G1
         // Regret button click event handle
         private void btnRegret_Click(object sender, RoutedEventArgs e)
         {
-            if (gameStatus == GameStatus.TO_MOVE) btnRegret.Cursor = Cursors.No;
-            else
+            if (gameStatus == GameStatus.TO_CHOOSE || gameStatus == GameStatus.GAME_OVER)
             {
-                btnRegret.Cursor = Cursors.Arrow;
                 if (MessageBox.Show("Are you sure?", "Regret Chess", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     try
@@ -265,6 +264,7 @@ namespace ChineseChess_G1
                         PiecesHandler.chooseOri(imgRow, imgCol);
                         drawValidMove();
                         changeGameStatus(GameStatus.TO_MOVE);
+                        btnRegret.Cursor = Cursors.No;
                         break;
                     case GameStatus.TO_MOVE:
                         // If the player clicks another piece in his own team, consider he try to change another piece to move
@@ -303,6 +303,7 @@ namespace ChineseChess_G1
                                 if (Board.currentColour % 2 == 0) MessageBox.Show("Red wins", "Congratulations", MessageBoxButton.OK, MessageBoxImage.Information);
                                 else if (Board.currentColour % 2 == 1) MessageBox.Show("Black wins", "Congratulations", MessageBoxButton.OK, MessageBoxImage.Information);
                                 changeGameStatus(GameStatus.GAME_OVER);
+                                chessPanel.Cursor = Cursors.No;
                                 break;
                             }
 
@@ -311,18 +312,16 @@ namespace ChineseChess_G1
                             if (check[0]) MessageBox.Show("Black is checked", "Danger", MessageBoxButton.OK, MessageBoxImage.Warning);
                             else if (check[1]) MessageBox.Show("Red is checked", "Danger", MessageBoxButton.OK, MessageBoxImage.Warning);
                             changeGameStatus(GameStatus.TO_CHOOSE);
-
+                            btnRegret.Cursor = Cursors.Arrow;
                             break;
                         }
-                    case GameStatus.GAME_OVER:
-                        chessPanel.Cursor = Cursors.No;
-                        break;
                 }
             }
             catch (Exception excp)
             {
                 MessageBox.Show(excp.Message, "Invalid move", MessageBoxButton.OK, MessageBoxImage.Error);
                 changeGameStatus(GameStatus.TO_CHOOSE);
+                btnRegret.Cursor = Cursors.Arrow;
                 redrawPieces();
                 // Indicate the origin location with a blue box
                 if (Board.lastOriLocationList.Count > 0)
@@ -354,15 +353,24 @@ namespace ChineseChess_G1
             if (MessageBox.Show("This operation will clear the current game, are you sure?", "Manual demo mode", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog();
-                openFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+                openFileDialog.Filter = "Manual text files (*.txt)|*.txt|All files (*.*)|*.*";
                 openFileDialog.InitialDirectory = @"c:\Users\";
                 if (openFileDialog.ShowDialog() == true)
                 {
                     txtblkUrl.SetValue(VisibilityProperty, Visibility.Visible);
                     txtblkUrl.Text = openFileDialog.FileName;
                     manual = File.ReadAllText(openFileDialog.FileName);
-                    // Read the moves from chess manual, stored in Board
-                    PiecesHandler.readManual(manual);
+                    try
+                    {
+                        // Read the moves from chess manual, stored in Board
+                        PiecesHandler.readManual(manual);
+                    }
+                    catch (Exception)
+                    {
+                        MessageBox.Show("Please open the right manual file", "Incorrect manual", MessageBoxButton.OK, MessageBoxImage.Error);
+                        manual = null;
+                        txtblkUrl.SetValue(VisibilityProperty, Visibility.Collapsed);
+                    }
                 }
 
                 // RE-INITIALIZATION CHESS BOARD
@@ -378,6 +386,8 @@ namespace ChineseChess_G1
                 // Re-draw all the pieces in the board on the panel
                 redrawPieces();
 
+                changeGameStatus(GameStatus.MANUAL_MODE);
+                chessPanel.Cursor = Cursors.No;
             }
         }
     }

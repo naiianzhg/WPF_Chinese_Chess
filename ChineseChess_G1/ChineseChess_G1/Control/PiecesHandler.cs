@@ -100,7 +100,7 @@ namespace ChineseChess.Control
             Board.pieces[destLocation[0], destLocation[1]] = temp;
         }
 
-        // This method is to automatically play the import manual
+        // This method is to read the moves in the manual
         public static void readManual(string manual)
         {
             string[] manualArr = manual.Split(' ');

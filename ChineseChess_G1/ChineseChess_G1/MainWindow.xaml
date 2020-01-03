@@ -18,7 +18,6 @@
                 </Grid.Background>
                 <!-- Implement of chess board-->
             </Grid>
-
             <!--Messages and options layout-->
             <StackPanel Name="Sidebar" Height="580" Width="200" Margin="25,0,0,0">
                 <StackPanel Name="GameControl">
@@ -141,7 +140,7 @@
                     <TextBox Name="txtblkCrrClr" VerticalAlignment="Bottom" Margin="0,0,0,15" Foreground="White" FontSize="20" TextAlignment="Center" Visibility="Collapsed"/>
                     <TextBlock Name="txtblkMessage" Margin="0,0,0,15" FontWeight="Bold" FontSize="20" TextAlignment="Center" TextWrapping="Wrap"/>
                 </StackPanel>
-                </StackPanel>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Window>
