@@ -194,6 +194,7 @@ namespace ChineseChess_G1
             {
                 changeGameStatus(GameStatus.TO_CHOOSE);
                 chessPanel.Cursor = Cursors.Arrow;
+                btnRegret.Cursor = Cursors.Arrow;
                 // Re-initialization of the game data only
                 GameRules.iniGame();
                 // Re-set the manual demo mode
@@ -221,10 +222,10 @@ namespace ChineseChess_G1
                     try
                     {
                         GameRules.regret();
+                        // Set game status to TO_CHOOSE
+                        changeGameStatus(GameStatus.TO_CHOOSE);
                         // If the player regrets from the checkmate situation, change the cursor back to defaut
                         chessPanel.Cursor = Cursors.Arrow;
-                        // And set game status to TO_CHOOSE
-                        changeGameStatus(GameStatus.TO_CHOOSE);
 
                         redrawCurrenColour();
                         // Re-draw the chances left on the regret button, if currently it is black's turn, the regret chance will be red's
@@ -303,6 +304,7 @@ namespace ChineseChess_G1
                                 if (Board.currentColour % 2 == 0) MessageBox.Show("Red wins", "Congratulations", MessageBoxButton.OK, MessageBoxImage.Information);
                                 else if (Board.currentColour % 2 == 1) MessageBox.Show("Black wins", "Congratulations", MessageBoxButton.OK, MessageBoxImage.Information);
                                 changeGameStatus(GameStatus.GAME_OVER);
+                                btnRegret.Cursor = Cursors.Arrow;
                                 chessPanel.Cursor = Cursors.No;
                                 break;
                             }
@@ -313,6 +315,7 @@ namespace ChineseChess_G1
                             else if (check[1]) MessageBox.Show("Red is checked", "Danger", MessageBoxButton.OK, MessageBoxImage.Warning);
                             changeGameStatus(GameStatus.TO_CHOOSE);
                             btnRegret.Cursor = Cursors.Arrow;
+                            chessPanel.Cursor = Cursors.Arrow;
                             break;
                         }
                 }
@@ -322,6 +325,7 @@ namespace ChineseChess_G1
                 MessageBox.Show(excp.Message, "Invalid move", MessageBoxButton.OK, MessageBoxImage.Error);
                 changeGameStatus(GameStatus.TO_CHOOSE);
                 btnRegret.Cursor = Cursors.Arrow;
+                chessPanel.Cursor = Cursors.Arrow;
                 redrawPieces();
                 // Indicate the origin location with a blue box
                 if (Board.lastOriLocationList.Count > 0)
@@ -333,13 +337,33 @@ namespace ChineseChess_G1
         }
 
         // TODO
-        private void btnPlay_Click(object sender, RoutedEventArgs e)
+        async Task putTaskDelay()
+        {
+            await Task.Delay(1000);
+        }
+        private async void btnPlay_Click(object sender, RoutedEventArgs e)
         {   
             if (manual == null) MessageBox.Show("You did not import any chess manual", "Invalid operation", MessageBoxButton.OK, MessageBoxImage.Error);
             else
             {
+                int[] manualOriLocation = new int[2], manualDestLocation = new int[2];
                 // Automatical move
-
+                for (int i = 0; i < Board.manualOriLocationList.Count; i++)
+                {
+                    manualOriLocation[0] = Board.manualOriLocationList[i] / 10; manualOriLocation[1] = Board.manualOriLocationList[i] % 10;
+                    manualDestLocation[0] = Board.manualDestLocationList[i] / 10; manualDestLocation[1] = Board.manualDestLocationList[i] % 10;
+                    // Save this chosen original location as last original location
+                    Board.addLastOriLocation(manualOriLocation);
+                    PiecesHandler.moveTo(manualOriLocation, manualDestLocation);
+                    redrawPieces();
+                    // Indicate the origin location with a blue box
+                    if (Board.lastOriLocationList.Count > 0)
+                    {
+                        Image oriLocationImg = (Image)chessPanel.Children[9 * Board.getLastOriLocation()[0] + Board.getLastOriLocation()[1]];
+                        oriLocationImg.Source = new BitmapImage(new Uri("/Images/OriLocationBox.png", UriKind.RelativeOrAbsolute));
+                    }
+                    await putTaskDelay();
+                }
             }
         }
 
@@ -352,6 +376,21 @@ namespace ChineseChess_G1
         {
             if (MessageBox.Show("This operation will clear the current game, are you sure?", "Manual demo mode", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
+                // RE-INITIALIZATION CHESS BOARD
+                // Re-initialization of the game data only
+                GameRules.iniGame();
+                // Re-draw the current colour
+                redrawCurrenColour();
+                // Re-draw the chances left on the regret button, if currently it is black's turn, the regret chance will be red's
+                btnRegret.Content =
+                    Board.currentColour % 2 == 0 ?
+                    $"Red's Regret({Board.regretAmount[Board.currentColour % 2]})" :
+                    $"Black's Regret({Board.regretAmount[Board.currentColour % 2]})";
+                // Re-draw all the pieces in the board on the panel
+                redrawPieces();
+
+                changeGameStatus(GameStatus.MANUAL_MODE);
+                chessPanel.Cursor = Cursors.No;
                 OpenFileDialog openFileDialog = new OpenFileDialog();
                 openFileDialog.Filter = "Manual text files (*.txt)|*.txt|All files (*.*)|*.*";
                 openFileDialog.InitialDirectory = @"c:\Users\";
@@ -372,22 +411,6 @@ namespace ChineseChess_G1
                         txtblkUrl.SetValue(VisibilityProperty, Visibility.Collapsed);
                     }
                 }
-
-                // RE-INITIALIZATION CHESS BOARD
-                // Re-initialization of the game data only
-                GameRules.iniGame();
-                // Re-draw the current colour
-                redrawCurrenColour();
-                // Re-draw the chances left on the regret button, if currently it is black's turn, the regret chance will be red's
-                btnRegret.Content =
-                    Board.currentColour % 2 == 0 ?
-                    $"Red's Regret({Board.regretAmount[Board.currentColour % 2]})" :
-                    $"Black's Regret({Board.regretAmount[Board.currentColour % 2]})";
-                // Re-draw all the pieces in the board on the panel
-                redrawPieces();
-
-                changeGameStatus(GameStatus.MANUAL_MODE);
-                chessPanel.Cursor = Cursors.No;
             }
         }
     }
