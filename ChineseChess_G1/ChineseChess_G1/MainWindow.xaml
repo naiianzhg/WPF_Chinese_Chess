@@ -72,7 +72,7 @@
                         </Button.Style>
                     </Button>
                 </StackPanel>
-                <StackPanel Name="ManualDemo">
+                <StackPanel Name="ManualDemo" Visibility="Collapsed">
                     <Border BorderBrush="Blue" BorderThickness="0,2,0,0" Margin="0,15,0,25" Width="180"/>
                     <TextBlock Name="ManualDemoTitle" Text="Manual Demo: " FontWeight="Bold" FontSize="20" FontStyle="Italic" Margin="0,0,0,15"/>
                     <Button Name="btnPlay" FontSize="20" Background="Blue" Foreground="White" Content="Play Manual" Click="btnPlay_Click" Margin="0,0,0,10" Visibility="Visible">
@@ -132,7 +132,7 @@
                     </StackPanel>
                     <Border BorderBrush="Blue" BorderThickness="0,2,0,0" Margin="0,15,0,25" Width="180"/>
                 </StackPanel>
-                <StackPanel x:Name="Message">
+                <StackPanel Name="Message" Visibility="Collapsed">
                     <StackPanel.Background>
                         <SolidColorBrush Color="AntiqueWhite" Opacity="0.8"/>
                     </StackPanel.Background>

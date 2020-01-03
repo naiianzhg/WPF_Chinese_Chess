@@ -149,17 +149,16 @@ namespace ChineseChess_G1
         {
             txtblkRound.Text = $"Round {Board.currentColour}";
             txtblkRound.SetValue(VisibilityProperty, Visibility.Visible);
+            txtblkCrrClr.SetValue(VisibilityProperty, Visibility.Visible);
             if (Board.currentColour % 2 == 0)
             {
                 txtblkCrrClr.Text = "Black's Move";
                 txtblkCrrClr.Background = Brushes.Black;
-                txtblkCrrClr.SetValue(VisibilityProperty, Visibility.Visible);
             }
             else
             {
                 txtblkCrrClr.Text = "Red's Move";
                 txtblkCrrClr.Background = Brushes.Red;
-                txtblkCrrClr.SetValue(VisibilityProperty, Visibility.Visible);
             }
         }
 
@@ -170,16 +169,19 @@ namespace ChineseChess_G1
             IniGame();
             // draw the current colour
             redrawCurrenColour();
+            // appear the regret button, restart button as well as disappear the start button
+            btnStart.SetValue(VisibilityProperty, Visibility.Collapsed);
+            btnRestart.SetValue(VisibilityProperty, Visibility.Visible);
+            btnRegret.SetValue(VisibilityProperty, Visibility.Visible);
+            // appear the manual demo mode options
+            ManualDemo.SetValue(VisibilityProperty, Visibility.Visible);
+            // appear the game message
+            Message.SetValue(VisibilityProperty, Visibility.Visible);
             // Re-draw the chances left on the regret button, if currently it is black's turn, the regret chance will be red's
             btnRegret.Content =
                 Board.currentColour % 2 == 0 ?
                 $"Red's Regret({Board.regretAmount[Board.currentColour % 2]})" :
                 $"Black's Regret({Board.regretAmount[Board.currentColour % 2]})";
-            // apprear the current colour textblock, regret button, restart button
-            // as well as disappear the start button
-            btnStart.SetValue(VisibilityProperty, Visibility.Collapsed);
-            btnRestart.SetValue(VisibilityProperty, Visibility.Visible);
-            btnRegret.SetValue(VisibilityProperty, Visibility.Visible);
             // redraw all the pieces in the board on the panel
             redrawPieces();
         }
@@ -193,6 +195,9 @@ namespace ChineseChess_G1
                 chessPanel.Cursor = Cursors.Arrow;
                 // Re-initialization of the game data only
                 GameRules.iniGame();
+                // Re-set the manual demo mode
+                manual = null;
+                txtblkUrl.SetValue(VisibilityProperty, Visibility.Collapsed);
                 // Re-draw the current colour
                 redrawCurrenColour();
                 // Re-draw the chances left on the regret button, if currently it is black's turn, the regret chance will be red's
@@ -330,24 +335,12 @@ namespace ChineseChess_G1
 
         // TODO
         private void btnPlay_Click(object sender, RoutedEventArgs e)
-        {
-            if (MessageBox.Show("This operation will clear the current game, are you sure?", "Restart Game", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+        {   
+            if (manual == null) MessageBox.Show("You did not import any chess manual", "Invalid operation", MessageBoxButton.OK, MessageBoxImage.Error);
+            else
             {
-                if (manual == null) MessageBox.Show("You did not import any chess manual", "Invalid operation", MessageBoxButton.OK, MessageBoxImage.Error);
-                else
-                {
-                    // Re-initialization of the game data only
-                    GameRules.iniGame();
-                    // Re-draw the current colour
-                    redrawCurrenColour();
-                    // Re-draw the chances left on the regret button, if currently it is black's turn, the regret chance will be red's
-                    btnRegret.Content =
-                        Board.currentColour % 2 == 0 ?
-                        $"Red's Regret({Board.regretAmount[Board.currentColour % 2]})" :
-                        $"Black's Regret({Board.regretAmount[Board.currentColour % 2]})";
-                    // Re-draw all the pieces in the board on the panel
-                    redrawPieces();
-                }
+                // Automatical move
+
             }
         }
 
@@ -358,16 +351,33 @@ namespace ChineseChess_G1
 
         private void btnOpen_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
-            openFileDialog.InitialDirectory = @"c:\Users\";
-            if (openFileDialog.ShowDialog() == true)
+            if (MessageBox.Show("This operation will clear the current game, are you sure?", "Manual demo mode", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                txtblkUrl.SetValue(VisibilityProperty, Visibility.Visible);
-                txtblkUrl.Text = openFileDialog.FileName;
-                manual = File.ReadAllText(openFileDialog.FileName);
-                // Read chess manual
-                PiecesHandler.readManual(manual);
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                openFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+                openFileDialog.InitialDirectory = @"c:\Users\";
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    txtblkUrl.SetValue(VisibilityProperty, Visibility.Visible);
+                    txtblkUrl.Text = openFileDialog.FileName;
+                    manual = File.ReadAllText(openFileDialog.FileName);
+                    // Read the moves from chess manual, stored in Board
+                    PiecesHandler.readManual(manual);
+                }
+
+                // RE-INITIALIZATION CHESS BOARD
+                // Re-initialization of the game data only
+                GameRules.iniGame();
+                // Re-draw the current colour
+                redrawCurrenColour();
+                // Re-draw the chances left on the regret button, if currently it is black's turn, the regret chance will be red's
+                btnRegret.Content =
+                    Board.currentColour % 2 == 0 ?
+                    $"Red's Regret({Board.regretAmount[Board.currentColour % 2]})" :
+                    $"Black's Regret({Board.regretAmount[Board.currentColour % 2]})";
+                // Re-draw all the pieces in the board on the panel
+                redrawPieces();
+
             }
         }
     }
