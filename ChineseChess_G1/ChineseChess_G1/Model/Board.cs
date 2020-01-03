@@ -21,6 +21,10 @@ namespace ChineseChess.Model
         // Last be-eaten piece
         public static List<Pieces> lastEatenPieceList { get; set; }
 
+        // Store the moves of the manual
+        public static List<int> manualOriLocationList { get; set; }
+        public static List<int> manualDestLocationList { get; set; }
+
         // In the constructor, we initialize all the pieces and put them in the board which is an array of pieces
         public Board()
         {
@@ -32,6 +36,8 @@ namespace ChineseChess.Model
             lastEatenPieceList = new List<Pieces>();
             // each team has 3 chances to regret
             regretAmount = new int[] { 3, 3 };
+            manualOriLocationList = new List<int>();
+            manualDestLocationList = new List<int>();
 
             // Initialize the pieces and store them in chess board
             // Store Soldiers

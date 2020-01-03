@@ -55,6 +55,9 @@ namespace ChineseChess_G1
             this.gameStatus = gameStatus;
         }
 
+        // String to store manual
+        public string manual;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -141,9 +144,11 @@ namespace ChineseChess_G1
             }
         }
 
-        // Indicate the current team colour
+        // Indicate the current team colour and round
         private void redrawCurrenColour()
         {
+            txtblkRound.Text = $"Round {Board.currentColour}";
+            txtblkRound.SetValue(VisibilityProperty, Visibility.Visible);
             if (Board.currentColour % 2 == 0)
             {
                 txtblkCrrClr.Text = "Black's Move";
@@ -183,7 +188,9 @@ namespace ChineseChess_G1
         private void btnRestart_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Are you sure?", "Restart Game", MessageBoxButton.YesNo,MessageBoxImage.Question) == MessageBoxResult.Yes)
-            {             
+            {
+                changeGameStatus(GameStatus.TO_CHOOSE);
+                chessPanel.Cursor = Cursors.Arrow;
                 // Re-initialization of the game data only
                 GameRules.iniGame();
                 // Re-draw the current colour
@@ -201,36 +208,40 @@ namespace ChineseChess_G1
         // Regret button click event handle
         private void btnRegret_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Are you sure?", "Regret Chess", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (gameStatus == GameStatus.TO_MOVE) btnRegret.Cursor = Cursors.No;
+            else
             {
-                try
+                btnRegret.Cursor = Cursors.Arrow;
+                if (MessageBox.Show("Are you sure?", "Regret Chess", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
-                    GameRules.regret();
-                    // If the player regrets from the checkmate situation, change the cursor back to defaut
-                    chessPanel.Cursor = Cursors.Arrow;
-                    // And set game status to TO_CHOOSE
-                    changeGameStatus(GameStatus.TO_CHOOSE);
-
-                    redrawCurrenColour();
-                    // Re-draw the chances left on the regret button, if currently it is black's turn, the regret chance will be red's
-                    btnRegret.Content =
-                        Board.currentColour % 2 == 0 ?
-                        $"Red's Regret({Board.regretAmount[Board.currentColour % 2]})" :
-                        $"Black's Regret({Board.regretAmount[Board.currentColour % 2]})";
-                    redrawPieces();
-                    // Redraw the origin location indication
-                    if (Board.lastOriLocationList.Count > 0)
+                    try
                     {
-                        Image oriLocationImg = (Image)chessPanel.Children[9 * Board.getLastOriLocation()[0] + Board.getLastOriLocation()[1]];
-                        oriLocationImg.Source = new BitmapImage(new Uri("/Images/OriLocationBox.png", UriKind.RelativeOrAbsolute));
+                        GameRules.regret();
+                        // If the player regrets from the checkmate situation, change the cursor back to defaut
+                        chessPanel.Cursor = Cursors.Arrow;
+                        // And set game status to TO_CHOOSE
+                        changeGameStatus(GameStatus.TO_CHOOSE);
+
+                        redrawCurrenColour();
+                        // Re-draw the chances left on the regret button, if currently it is black's turn, the regret chance will be red's
+                        btnRegret.Content =
+                            Board.currentColour % 2 == 0 ?
+                            $"Red's Regret({Board.regretAmount[Board.currentColour % 2]})" :
+                            $"Black's Regret({Board.regretAmount[Board.currentColour % 2]})";
+                        redrawPieces();
+                        // Redraw the origin location indication
+                        if (Board.lastOriLocationList.Count > 0)
+                        {
+                            Image oriLocationImg = (Image)chessPanel.Children[9 * Board.getLastOriLocation()[0] + Board.getLastOriLocation()[1]];
+                            oriLocationImg.Source = new BitmapImage(new Uri("/Images/OriLocationBox.png", UriKind.RelativeOrAbsolute));
+                        }
+                    }
+                    catch (Exception excp)
+                    {
+                        MessageBox.Show(excp.Message, "Invalid operation", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
-                catch (Exception excp)
-                {
-                    MessageBox.Show(excp.Message, "Invalid operation", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
             }
-
         }
 
         // Pieces/Valid move images click event handle
@@ -269,18 +280,6 @@ namespace ChineseChess_G1
                         }
                         else
                         {
-                            // If the player want to do a dangerous move, ask for confirmation
-                            // Introduce MessageBoxResult to receive the choice of player
-                            MessageBoxResult result;
-                            if (PiecesHandler.isDangerousMove(imgRow, imgCol))
-                            {
-                                result = MessageBox.Show("You risk being checked, are you sure to do this move?", "Confirm your dangerous move", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                                if (result == MessageBoxResult.No)
-                                {
-                                    MessageBox.Show("Choose another move then", "Good choice", MessageBoxButton.OK, MessageBoxImage.Information);
-                                    break;
-                                }
-                            }
                             PiecesHandler.chooseDest(imgRow, imgCol);
                             redrawCurrenColour();
                             // Re-draw the chances left on the regret button, if currently it is black's turn, the regret chance will be red's
@@ -332,7 +331,24 @@ namespace ChineseChess_G1
         // TODO
         private void btnPlay_Click(object sender, RoutedEventArgs e)
         {
-
+            if (MessageBox.Show("This operation will clear the current game, are you sure?", "Restart Game", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                if (manual == null) MessageBox.Show("You did not import any chess manual", "Invalid operation", MessageBoxButton.OK, MessageBoxImage.Error);
+                else
+                {
+                    // Re-initialization of the game data only
+                    GameRules.iniGame();
+                    // Re-draw the current colour
+                    redrawCurrenColour();
+                    // Re-draw the chances left on the regret button, if currently it is black's turn, the regret chance will be red's
+                    btnRegret.Content =
+                        Board.currentColour % 2 == 0 ?
+                        $"Red's Regret({Board.regretAmount[Board.currentColour % 2]})" :
+                        $"Black's Regret({Board.regretAmount[Board.currentColour % 2]})";
+                    // Re-draw all the pieces in the board on the panel
+                    redrawPieces();
+                }
+            }
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
@@ -346,8 +362,13 @@ namespace ChineseChess_G1
             openFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
             openFileDialog.InitialDirectory = @"c:\Users\";
             if (openFileDialog.ShowDialog() == true)
+            {
                 txtblkUrl.SetValue(VisibilityProperty, Visibility.Visible);
                 txtblkUrl.Text = openFileDialog.FileName;
+                manual = File.ReadAllText(openFileDialog.FileName);
+                // Read chess manual
+                PiecesHandler.readManual(manual);
+            }
         }
     }
 }

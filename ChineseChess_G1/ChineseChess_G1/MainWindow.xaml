@@ -18,13 +18,12 @@
                 </Grid.Background>
                 <!-- Implement of chess board-->
             </Grid>
-            
+
             <!--Messages and options layout-->
             <StackPanel Name="Sidebar" Height="580" Width="200" Margin="25,0,0,0">
                 <StackPanel Name="GameControl">
-                    <Border BorderBrush="Black" BorderThickness="0,2,0,0" Margin="0,0,0,10" Width="170"/>
-                    <TextBlock Name="GameControlTitle" Text="Founction Buttons: " FontSize="20" FontStyle="Italic" Margin="0,0,0,10"/>
-                    <Button Name="btnRestart" FontSize="20" FontWeight="Bold" Background="Blue" Foreground="White" Content="Restart" Click="btnRestart_Click" Margin="0,0,0,10" Visibility="Collapsed">
+                    <TextBlock Name="GameControlTitle" Text="Founction Buttons: " FontWeight="Bold" FontSize="20" FontStyle="Italic" Margin="0,0,0,15"/>
+                    <Button Name="btnRestart" FontSize="20"  Background="Blue" Foreground="White" Content="Restart" Click="btnRestart_Click" Margin="0,0,0,10" Visibility="Collapsed">
                         <Button.Style>
                             <Style TargetType="{x:Type Button}">
                                 <Style.Triggers>
@@ -40,7 +39,7 @@
                             </Style>
                         </Button.Style>
                     </Button>
-                    <Button Name="btnStart"  FontSize="20" FontWeight="Bold" Content="Start" Background="Blue"  Foreground="White" Click="btnStart_Click" Margin="0,0,0,10">
+                    <Button Name="btnStart"  FontSize="20"  Content="Start" Background="Blue"  Foreground="White" Click="btnStart_Click" Margin="0,0,0,10">
                         <Button.Style>
                             <Style TargetType="{x:Type Button}">
                                 <Style.Triggers>
@@ -56,7 +55,7 @@
                             </Style>
                         </Button.Style>
                     </Button>
-                    <Button Name="btnRegret" FontSize="20" FontWeight="Bold" Background="Blue" Foreground="White" Content="Regret" Click="btnRegret_Click" Margin="0,0,0,10" Visibility="Collapsed">
+                    <Button Name="btnRegret" FontSize="20"  Background="Blue" Foreground="White" Content="Regret" Click="btnRegret_Click" Margin="0,0,0,10" Visibility="Collapsed">
                         <Button.Style>
                             <Style TargetType="{x:Type Button}">
                                 <Style.Triggers>
@@ -74,9 +73,9 @@
                     </Button>
                 </StackPanel>
                 <StackPanel Name="ManualDemo">
-                    <Border BorderBrush="Black" BorderThickness="0,2,0,0" Margin="0,0,0,10" Width="170"/>
-                    <TextBlock Name="ManualDemoTitle" Text="Manual demo: " FontSize="20" FontStyle="Italic" Margin="0,0,0,10"/>
-                    <Button Name="btnPlay" FontSize="20" FontWeight="Bold" Background="Blue" Foreground="White" Content="Play Manual" Click="btnPlay_Click" Margin="0,0,0,10" Visibility="Visible">
+                    <Border BorderBrush="Blue" BorderThickness="0,2,0,0" Margin="0,15,0,25" Width="180"/>
+                    <TextBlock Name="ManualDemoTitle" Text="Manual Demo: " FontWeight="Bold" FontSize="20" FontStyle="Italic" Margin="0,0,0,15"/>
+                    <Button Name="btnPlay" FontSize="20" Background="Blue" Foreground="White" Content="Play Manual" Click="btnPlay_Click" Margin="0,0,0,10" Visibility="Visible">
                         <Button.Style>
                             <Style TargetType="{x:Type Button}">
                                 <Style.Triggers>
@@ -92,7 +91,7 @@
                             </Style>
                         </Button.Style>
                     </Button>
-                    <Button Name="btnSave"  FontSize="20" FontWeight="Bold" Content="Save Manual" Background="Blue"  Foreground="White" Click="btnSave_Click"  Margin="0,0,0,10">
+                    <Button Name="btnSave"  FontSize="20" Content="Save Manual" Background="Blue"  Foreground="White" Click="btnSave_Click"  Margin="0,0,0,10">
                         <Button.Style>
                             <Style TargetType="{x:Type Button}">
                                 <Style.Triggers>
@@ -108,7 +107,7 @@
                             </Style>
                         </Button.Style>
                     </Button>
-                    <Button Name="btnOpen" FontSize="20" FontWeight="Bold" Background="Blue" Foreground="White" Content="Open Manual" Click="btnOpen_Click" Margin="0,0,0,10" Visibility="Visible">
+                    <Button Name="btnOpen" FontSize="20" Background="Blue" Foreground="White" Content="Open Manual" Click="btnOpen_Click" Margin="0,0,0,10" Visibility="Visible">
                         <Button.Style>
                             <Style TargetType="{x:Type Button}">
                                 <Style.Triggers>
@@ -124,14 +123,25 @@
                             </Style>
                         </Button.Style>
                     </Button>
-                    <TextBlock Name="txtblkUrlTitle" FontSize="15" Foreground="Blue" Text="Manual URL:" Margin="0,0,0,10"/>
-                    <TextBlock Name="txtblkUrl" FontSize="12" FontStyle="Italic" Foreground="Blue" TextWrapping="Wrap"  Margin="5,0,5,10" Visibility="Collapsed"/>
+                    <StackPanel>
+                        <StackPanel.Background>
+                            <SolidColorBrush Color="AntiqueWhite" Opacity="0.8"/>
+                        </StackPanel.Background>
+                        <TextBlock Text="Current Manual URL:" FontSize="15" FontStyle="Italic" FontWeight="Bold"/>
+                        <TextBlock Name="txtblkUrl" FontSize="12" Text="url address" Foreground="Blue" TextWrapping="Wrap" Margin="10,0,10,0" Visibility="Collapsed"/>
+                    </StackPanel>
+                    <Border BorderBrush="Blue" BorderThickness="0,2,0,0" Margin="0,15,0,25" Width="180"/>
                 </StackPanel>
-                <Border BorderBrush="Black" BorderThickness="0,2,0,0" Margin="0,0,0,10" Width="170"/>
-                <TextBlock Text="Message:" FontSize="20"/>
-                <TextBlock Name="txtblkMessage" Width="100" FontSize="20" Margin="0,15,0,15" TextAlignment="Center" TextWrapping="Wrap"/>
-                <TextBox Name="txtblkCrrClr" VerticalAlignment="Bottom" Foreground="White" FontSize="20" TextAlignment="Center" Visibility="Hidden"/>
-            </StackPanel>
+                <StackPanel x:Name="Message">
+                    <StackPanel.Background>
+                        <SolidColorBrush Color="AntiqueWhite" Opacity="0.8"/>
+                    </StackPanel.Background>
+                    <TextBlock Text="Message:" FontSize="20" FontStyle="Italic" FontWeight="Bold"/>
+                    <TextBlock Name="txtblkRound" Margin="10,15,0,0" FontSize="15" FontWeight="Bold" TextAlignment="Left" Text="Round" Visibility="Collapsed"/>
+                    <TextBox Name="txtblkCrrClr" VerticalAlignment="Bottom" Margin="0,0,0,15" Foreground="White" FontSize="20" TextAlignment="Center" Visibility="Collapsed"/>
+                    <TextBlock Name="txtblkMessage" Margin="0,0,0,15" FontWeight="Bold" FontSize="20" TextAlignment="Center" TextWrapping="Wrap"/>
+                </StackPanel>
+                </StackPanel>
         </StackPanel>
     </Grid>
 </Window>

@@ -9,54 +9,7 @@ namespace ChineseChess.Control
 {
     class PiecesHandler
     {
-        // Parse the input string location in int location
-        //public static int[] parseLocation(string s, out bool isValid)
-        //{
-        //    string[] strLocation;
-        //    int[] location = new int[2];
-        //    int splitAmount = 0, splitIndex = 0, numAmount = 0;
-        //    isValid = false;
-
-        //    // Split the input string 'x,y' into two parts x and y and storing into int[] (int[0] = x, int[1] = y)
-        //    // if there is only one none-digit character between two numbers as spliting character, it is valid for format
-        //    // Obtain the (1.)amount of none-digit character, (2.)the index of the last none-digit character and (3.)the amount of numbers
-        //    for (int i = 0; i < s.Length; i++)
-        //    {
-        //        if (!char.IsDigit(s[i]))
-        //        {
-        //            splitAmount++;
-        //            splitIndex = i;
-        //        }
-        //        else numAmount++;
-        //    }
-
-        //    // The input must has (1.)only one non-digit character, (2.)the character must be surrounded by two numbers
-        //    // if not, it is an informat input
-        //    if (numAmount > 1 && splitAmount == 1 && splitIndex != s.Length - 1 && splitIndex != 0)
-        //    {
-        //        // The player should have entered comma as the spliting character
-        //        // In case of not miss-enter too much times, no matter what spliting char the player use, the program can process
-        //        // Obtain the string array location
-        //        strLocation = s.Split(s[splitIndex]);
-        //        // Convert the string location to int location
-        //        for (int i = 0; i < strLocation.Length; i++)
-        //        {
-        //            location[i] = Convert.ToInt32(strLocation[i]);
-        //        }
-
-        //        // Check the validity of the input position, if it is not out of range the board
-        //        // Then the choose input is valid
-        //        if (location[0] < 0 || location[0] > 9) throw new Exception("Row index out of range");
-        //        else if (location[1] < 0 || location[1] > 8) throw new Exception("Column index out of range");
-        //        else isValid = true;
-        //    }
-        //    else throw new Exception("Informat input");
-
-        //    return location;
-        //}
-
         // Receive the input original location (piece location) and if the location is valid calculate its valid moves
-
         public static void chooseOri(int row, int col)
         {
             int[] chosenOriLocation = new int[] { row, col };
@@ -97,7 +50,7 @@ namespace ChineseChess.Control
             {
                 // If the player did not choose the correct position to move, the last saved ori location will be remove
                 Board.removeLastOriLocation();
-                throw new Exception("This move will cause a check to you");
+                throw new Exception("Suicide move is forbidden in this game");
             }
 
             // save this chosen destination location as last destination location
@@ -145,6 +98,40 @@ namespace ChineseChess.Control
             Pieces temp = Board.pieces[oriLocation[0], oriLocation[1]];
             Board.pieces[oriLocation[0], oriLocation[1]] = null;
             Board.pieces[destLocation[0], destLocation[1]] = temp;
+        }
+
+        // This method is to automatically play the import manual
+        public static void readManual(string manual)
+        {
+            string[] manualArr = manual.Split(' ');
+            List<int> oriLocationList = new List<int>();
+            List<int> destLocationList = new List<int>();
+            int oriLocation = 0, destLocation = 0;
+            int i = 0;
+            // Read from the manual all the original Location and destination Location
+            foreach (string str in manualArr)
+            {
+                switch (i % 10)
+                {
+                    case 5:
+                        oriLocation = (9 - Int32.Parse(str)) * 10;
+                        break;
+                    case 6:
+                        oriLocation += (8 - Int32.Parse(str));
+                        oriLocationList.Add(oriLocation);
+                        break;
+                    case 7:
+                        destLocation = (9 - Int32.Parse(str)) * 10;
+                        break;
+                    case 8:
+                        destLocation += (8 - Int32.Parse(str));
+                        destLocationList.Add(destLocation);
+                        break;
+                }
+                i++;
+            }
+            Board.manualOriLocationList = oriLocationList;
+            Board.manualDestLocationList = destLocationList;
         }
     }
 }
