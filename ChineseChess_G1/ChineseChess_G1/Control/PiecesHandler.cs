@@ -13,17 +13,14 @@ namespace ChineseChess.Control
         {
             int[] chosenOriLocation = new int[] { row, col };
 
+            // Check if there is no piece
+            if (Board.pieces[row, col] == null) throw new Exception("There is no piece here");
+
             // Check if the chosen piece belongs to the other team
-            if (Board.pieces[row, col].colour != Board.currentColour % 2)
-            {
-                throw new Exception("This piece is not belong to you");
-            }
+            if (Board.pieces[row, col].colour != Board.currentColour % 2) throw new Exception("This piece is not belong to you");
 
             // Check if the chosen piece has any possible move
-            if (Board.pieces[row, col].calculateValidMoveList(chosenOriLocation).Count == 0)
-            {
-                throw new Exception("This piece cannot move anywhere");
-            }
+            if (Board.pieces[row, col].calculateValidMoveList(chosenOriLocation).Count == 0) throw new Exception("This piece cannot move anywhere");
 
             // Save this chosen original location as last original location
             Board.addLastOriLocation(chosenOriLocation);

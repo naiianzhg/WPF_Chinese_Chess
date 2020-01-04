@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Text;
-using ChineseChess.View;
 using ChineseChess.Control;
 
 namespace ChineseChess.Model
