@@ -4,6 +4,7 @@ using System.Text;
 using ChineseChess.Model;
 using ChineseChess.View;
 using System.Linq; // List.Last()
+using System.Threading;
 
 namespace ChineseChess.Control
 {
@@ -98,17 +99,13 @@ namespace ChineseChess.Control
             return isChkmt;
         }
 
-        // Regret move
-        public static void regret()
+        // Withdraw move
+        public static void withdraw()
         {
-            // If there is no pieces available for regreting
+            // If there is no pieces available for withdraw
             if (Board.lastDestLocationList.Count == 0)
-                throw new Exception("You have no move to regret");
-            // If there is no more chances for the player to regret
-            if (Board.regretAmount[Board.currentColour % 2] <= 0)
-                throw new Exception("You have no chance to regret anymore");
-
-            // else the player still has chances for regret
+                throw new Exception("You have no move to withdraw");
+            
             // Move back the piece
             PiecesHandler.tracelessMoveTo(Board.getLastDestLocation(), Board.getLastOriLocation());
             // If there is an eaten piece, put it back to the board, else put null
@@ -117,10 +114,26 @@ namespace ChineseChess.Control
             Board.removeLastOriLocation();
             Board.removeLastDestLocation();
             Board.removeLastEatenPiece();
+
+            // Change back the turn
+            Board.currentColour--;
+        }
+
+        // Regret
+        public static void regret()
+        {
+            // If there is no pieces available for withdraw
+            if (Board.lastDestLocationList.Count < 2)
+                throw new Exception("You have no move to regret");
+            // If there is no more chances for the player to regret
+            if (Board.regretAmount[Board.currentColour % 2] == 0)
+                throw new Exception("You have no chance to regret");
+
+            withdraw();
+            withdraw();
+
             // Reduce of regret chance by 1
             Board.regretAmount[Board.currentColour % 2]--;
-            // Change back the current colour
-            Board.changeTurn();
         }
     }
 }

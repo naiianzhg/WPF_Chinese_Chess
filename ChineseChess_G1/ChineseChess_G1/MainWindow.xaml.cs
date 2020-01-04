@@ -170,19 +170,20 @@ namespace ChineseChess_G1
             IniGame();
             // draw the current colour
             redrawCurrenColour();
-            // appear the regret button, restart button as well as disappear the start button
+            // appear the withdraw button, regret button, restart button as well as disappear the start button
             btnStart.SetValue(VisibilityProperty, Visibility.Collapsed);
             btnRestart.SetValue(VisibilityProperty, Visibility.Visible);
+            btnWithdraw.SetValue(VisibilityProperty, Visibility.Visible);
             btnRegret.SetValue(VisibilityProperty, Visibility.Visible);
+            // Re-draw the chances left on the regret button
+            btnRegret.Content =
+                Board.currentColour % 2 == 0 ?
+                $"Regret of Black({Board.regretAmount[Board.currentColour % 2]})" :
+                $"Regret of Red({Board.regretAmount[Board.currentColour % 2]})";
             // appear the manual demo mode options
             ManualDemo.SetValue(VisibilityProperty, Visibility.Visible);
             // appear the game message
             Message.SetValue(VisibilityProperty, Visibility.Visible);
-            // Re-draw the chances left on the regret button, if currently it is black's turn, the regret chance will be red's
-            btnRegret.Content =
-                Board.currentColour % 2 == 0 ?
-                $"Red's Regret({Board.regretAmount[Board.currentColour % 2]})" :
-                $"Black's Regret({Board.regretAmount[Board.currentColour % 2]})";
             // redraw all the pieces in the board on the panel
             redrawPieces();
         }
@@ -193,7 +194,9 @@ namespace ChineseChess_G1
             if (MessageBox.Show("Are you sure?", "Restart Game", MessageBoxButton.YesNo,MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 changeGameStatus(GameStatus.TO_CHOOSE);
+                // able to click
                 chessPanel.Cursor = Cursors.Arrow;
+                btnWithdraw.Cursor = Cursors.Arrow;
                 btnRegret.Cursor = Cursors.Arrow;
                 // Re-initialization of the game data only
                 GameRules.iniGame();
@@ -202,22 +205,52 @@ namespace ChineseChess_G1
                 txtblkUrl.SetValue(VisibilityProperty, Visibility.Collapsed);
                 // Re-draw the current colour
                 redrawCurrenColour();
-                // Re-draw the chances left on the regret button, if currently it is black's turn, the regret chance will be red's
+                // Re-draw the chances left on the regret button
                 btnRegret.Content =
                     Board.currentColour % 2 == 0 ?
-                    $"Red's Regret({Board.regretAmount[Board.currentColour % 2]})" :
-                    $"Black's Regret({Board.regretAmount[Board.currentColour % 2]})";
+                    $"Regret of Black({Board.regretAmount[Board.currentColour % 2]})" :
+                    $"Regret of Red({Board.regretAmount[Board.currentColour % 2]})";
                 // Re-draw all the pieces in the board on the panel
                 redrawPieces();
             }
         }
 
-        // Regret button click event handle
+        // Withdraw button click event handle
+        private void btnWithdraw_Click(object sender, RoutedEventArgs e)
+        {
+            if (gameStatus == GameStatus.TO_CHOOSE || gameStatus == GameStatus.GAME_OVER)
+            {
+                if (MessageBox.Show("Are you sure?", "Withdraw Move", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        GameRules.withdraw();
+                        // Set game status to TO_CHOOSE
+                        changeGameStatus(GameStatus.TO_CHOOSE);
+                        // If the player regrets from the checkmate situation, change the cursor back to defaut
+                        chessPanel.Cursor = Cursors.Arrow;
+                        redrawCurrenColour();
+                        redrawPieces();
+                        // Redraw the origin location indication
+                        if (Board.lastOriLocationList.Count > 0)
+                        {
+                            Image oriLocationImg = (Image)chessPanel.Children[9 * Board.getLastOriLocation()[0] + Board.getLastOriLocation()[1]];
+                            oriLocationImg.Source = new BitmapImage(new Uri("/Images/OriLocationBox.png", UriKind.RelativeOrAbsolute));
+                        }
+                    }
+                    catch (Exception excp)
+                    {
+                        MessageBox.Show(excp.Message, "Invalid operation", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+        }
+
         private void btnRegret_Click(object sender, RoutedEventArgs e)
         {
             if (gameStatus == GameStatus.TO_CHOOSE || gameStatus == GameStatus.GAME_OVER)
             {
-                if (MessageBox.Show("Are you sure?", "Regret Chess", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                if (MessageBox.Show("Are you sure?", "Regret Move", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     try
                     {
@@ -226,13 +259,12 @@ namespace ChineseChess_G1
                         changeGameStatus(GameStatus.TO_CHOOSE);
                         // If the player regrets from the checkmate situation, change the cursor back to defaut
                         chessPanel.Cursor = Cursors.Arrow;
-
                         redrawCurrenColour();
-                        // Re-draw the chances left on the regret button, if currently it is black's turn, the regret chance will be red's
+                        // Re-draw the chances left on the regret button
                         btnRegret.Content =
                             Board.currentColour % 2 == 0 ?
-                            $"Red's Regret({Board.regretAmount[Board.currentColour % 2]})" :
-                            $"Black's Regret({Board.regretAmount[Board.currentColour % 2]})";
+                            $"Regret of Black({Board.regretAmount[Board.currentColour % 2]})" :
+                            $"Regret of Red({Board.regretAmount[Board.currentColour % 2]})";
                         redrawPieces();
                         // Redraw the origin location indication
                         if (Board.lastOriLocationList.Count > 0)
@@ -265,6 +297,7 @@ namespace ChineseChess_G1
                         PiecesHandler.chooseOri(imgRow, imgCol);
                         drawValidMove();
                         changeGameStatus(GameStatus.TO_MOVE);
+                        btnWithdraw.Cursor = Cursors.No;
                         btnRegret.Cursor = Cursors.No;
                         break;
                     case GameStatus.TO_MOVE:
@@ -288,11 +321,11 @@ namespace ChineseChess_G1
                         {
                             PiecesHandler.chooseDest(imgRow, imgCol);
                             redrawCurrenColour();
-                            // Re-draw the chances left on the regret button, if currently it is black's turn, the regret chance will be red's
+                            // Re-draw the chances left on the regret button
                             btnRegret.Content =
                                 Board.currentColour % 2 == 0 ?
-                                $"Red's Regret({Board.regretAmount[Board.currentColour % 2]})" :
-                                $"Black's Regret({Board.regretAmount[Board.currentColour % 2]})";
+                                $"Regret of Black({Board.regretAmount[Board.currentColour % 2]})" :
+                                $"Regret of Red({Board.regretAmount[Board.currentColour % 2]})";
                             redrawPieces();
                             // Indicate the origin location with a blue box
                             Image oriLocationImg = (Image)chessPanel.Children[9 * Board.getLastOriLocation()[0] + Board.getLastOriLocation()[1]];
@@ -304,6 +337,7 @@ namespace ChineseChess_G1
                                 if (Board.currentColour % 2 == 0) MessageBox.Show("Red wins", "Congratulations", MessageBoxButton.OK, MessageBoxImage.Information);
                                 else if (Board.currentColour % 2 == 1) MessageBox.Show("Black wins", "Congratulations", MessageBoxButton.OK, MessageBoxImage.Information);
                                 changeGameStatus(GameStatus.GAME_OVER);
+                                btnWithdraw.Cursor = Cursors.Arrow;
                                 btnRegret.Cursor = Cursors.Arrow;
                                 chessPanel.Cursor = Cursors.No;
                                 break;
@@ -314,8 +348,8 @@ namespace ChineseChess_G1
                             if (check[0]) MessageBox.Show("Black is checked", "Danger", MessageBoxButton.OK, MessageBoxImage.Warning);
                             else if (check[1]) MessageBox.Show("Red is checked", "Danger", MessageBoxButton.OK, MessageBoxImage.Warning);
                             changeGameStatus(GameStatus.TO_CHOOSE);
+                            btnWithdraw.Cursor = Cursors.Arrow;
                             btnRegret.Cursor = Cursors.Arrow;
-                            chessPanel.Cursor = Cursors.Arrow;
                             break;
                         }
                 }
@@ -324,8 +358,8 @@ namespace ChineseChess_G1
             {
                 MessageBox.Show(excp.Message, "Invalid move", MessageBoxButton.OK, MessageBoxImage.Error);
                 changeGameStatus(GameStatus.TO_CHOOSE);
+                btnWithdraw.Cursor = Cursors.Arrow;
                 btnRegret.Cursor = Cursors.Arrow;
-                chessPanel.Cursor = Cursors.Arrow;
                 redrawPieces();
                 // Indicate the origin location with a blue box
                 if (Board.lastOriLocationList.Count > 0)
@@ -346,6 +380,10 @@ namespace ChineseChess_G1
             if (manual == null) MessageBox.Show("You did not import any chess manual", "Invalid operation", MessageBoxButton.OK, MessageBoxImage.Error);
             else
             {
+                // Disable buttons
+                btnWithdraw.Cursor = Cursors.No;
+                btnRegret.Cursor = Cursors.No;
+
                 int[] manualOriLocation = new int[2], manualDestLocation = new int[2];
                 // Automatical move
                 for (int i = 0; i < Board.manualOriLocationList.Count; i++)
@@ -381,11 +419,6 @@ namespace ChineseChess_G1
                 GameRules.iniGame();
                 // Re-draw the current colour
                 redrawCurrenColour();
-                // Re-draw the chances left on the regret button, if currently it is black's turn, the regret chance will be red's
-                btnRegret.Content =
-                    Board.currentColour % 2 == 0 ?
-                    $"Red's Regret({Board.regretAmount[Board.currentColour % 2]})" :
-                    $"Black's Regret({Board.regretAmount[Board.currentColour % 2]})";
                 // Re-draw all the pieces in the board on the panel
                 redrawPieces();
 

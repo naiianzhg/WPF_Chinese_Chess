@@ -54,6 +54,22 @@
                             </Style>
                         </Button.Style>
                     </Button>
+                    <Button Name="btnWithdraw" FontSize="20"  Background="Blue" Foreground="White" Content="Withdraw" Click="btnWithdraw_Click" Margin="0,0,0,10" Visibility="Collapsed">
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}">
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="RenderTransformOrigin" Value="0.5, 0.5"/>
+                                        <Setter Property="RenderTransform">
+                                            <Setter.Value>
+                                                <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
                     <Button Name="btnRegret" FontSize="20"  Background="Blue" Foreground="White" Content="Regret" Click="btnRegret_Click" Margin="0,0,0,10" Visibility="Collapsed">
                         <Button.Style>
                             <Style TargetType="{x:Type Button}">

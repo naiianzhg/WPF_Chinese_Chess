@@ -30,7 +30,7 @@ namespace ChineseChess.View
                 else if (Board.regretAmount[Board.currentColour % 2] > 1)
                     Console.Write(Board.regretAmount[Board.currentColour % 2].ToString() + " chances left - Do you need to regret? (y/n) ");
                 Console.ResetColor();
-                if (Console.ReadLine() == "y") GameRules.regret();
+                if (Console.ReadLine() == "y") GameRules.withdraw();
             }
         }
 
