@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using ChineseChess.Model;
-using ChineseChess.View;
 using System.Linq; // List.Last()
 
 namespace ChineseChess.Control
@@ -71,7 +70,7 @@ namespace ChineseChess.Control
             Pieces virtualEatenPiece = Board.pieces[row, col];
             tracelessMoveTo(Board.getLastOriLocation(), new int[] { row, col });
             // If a team will be checked after moving and it is its turn at the same time, the player need to confirme the dangerous move
-            if (GameRules.isChecked()[Board.currentColour % 2]) isDangerous = true;
+            if (GameRules.isChecked()) isDangerous = true;
             // Move the piece back to original position to continue
             tracelessMoveTo(new int[] { row, col }, Board.getLastOriLocation());
             Board.pieces[row, col] = virtualEatenPiece;
