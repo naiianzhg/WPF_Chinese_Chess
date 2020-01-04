@@ -15,7 +15,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ChineseChess.Model;
-using ChineseChess.View;
 using ChineseChess.Control;
 
 namespace ChineseChess_G1
@@ -344,9 +343,11 @@ namespace ChineseChess_G1
                             }
 
                             // If this move cause a CHECK
-                            bool[] check = GameRules.isChecked();
-                            if (check[0]) MessageBox.Show("Black is checked", "Danger", MessageBoxButton.OK, MessageBoxImage.Warning);
-                            else if (check[1]) MessageBox.Show("Red is checked", "Danger", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            if (GameRules.isChecked())
+                            {
+                                if (Board.currentColour % 2 == 0) MessageBox.Show("Black is checked", "Danger", MessageBoxButton.OK, MessageBoxImage.Warning);
+                               else if (Board.currentColour % 2 == 1) MessageBox.Show("Red is checked", "Danger", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            }
                             changeGameStatus(GameStatus.TO_CHOOSE);
                             btnWithdraw.Cursor = Cursors.Arrow;
                             btnRegret.Cursor = Cursors.Arrow;
