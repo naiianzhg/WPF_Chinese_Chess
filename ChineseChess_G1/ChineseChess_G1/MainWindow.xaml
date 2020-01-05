@@ -5,139 +5,36 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ChineseChess_G1"
         mc:Ignorable="d"
-        Icon="/Images/logo.png" Title="WPF Chinese Chess - Group 1" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
+        Icon="Resources/logo.png" Title="WPF Chinese Chess - Group 1" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
     <Window.Background>
-        <ImageBrush ImageSource="/Images/background.jpg"/>
+        <ImageBrush ImageSource="Resources/background.jpg"/>
     </Window.Background>
     <Grid>
         <StackPanel Orientation="Horizontal" Margin="25,25,25,25">
             <!--The chess panel layout-->
-            <Grid Name="chessPanel" Height="580" Width="520" VerticalAlignment="Top" HorizontalAlignment="Left">
+            <Grid Name="chessPanel" Height="800" Width="720" VerticalAlignment="Top" HorizontalAlignment="Left">
                 <Grid.Background>
-                    <ImageBrush ImageSource="/Images/panel.png"/>
+                    <ImageBrush ImageSource="Resources/panel.png"/>
                 </Grid.Background>
                 <!-- Implement of chess board-->
             </Grid>
-            <!--Messages and options layout-->
-            <StackPanel Name="Sidebar" Height="580" Width="200" Margin="25,0,0,0">
+            <!--Sidebar layout-->
+            <StackPanel Name="Sidebar" Width="250" Margin="25,0,0,0">
+                
                 <StackPanel Name="GameControl">
-                    <TextBlock Name="GameControlTitle" Text="Founction Buttons: " FontWeight="Bold" FontSize="20" FontStyle="Italic" Margin="0,0,0,15"/>
-                    <Button Name="btnRestart" FontSize="20"  Background="Blue" Foreground="White" Content="Restart" Click="btnRestart_Click" Margin="0,0,0,10" Visibility="Collapsed">
-                        <Button.Style>
-                            <Style TargetType="{x:Type Button}">
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="RenderTransformOrigin" Value="0.5, 0.5"/>
-                                        <Setter Property="RenderTransform">
-                                            <Setter.Value>
-                                                <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-                    <Button Name="btnStart"  FontSize="20"  Content="Start" Background="Blue"  Foreground="White" Click="btnStart_Click" Margin="0,0,0,10">
-                        <Button.Style>
-                            <Style TargetType="{x:Type Button}">
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="RenderTransformOrigin" Value="0.5, 0.5"/>
-                                        <Setter Property="RenderTransform">
-                                            <Setter.Value>
-                                                <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-                    <Button Name="btnWithdraw" FontSize="20"  Background="Blue" Foreground="White" Content="Withdraw" Click="btnWithdraw_Click" Margin="0,0,0,10" Visibility="Collapsed">
-                        <Button.Style>
-                            <Style TargetType="{x:Type Button}">
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="RenderTransformOrigin" Value="0.5, 0.5"/>
-                                        <Setter Property="RenderTransform">
-                                            <Setter.Value>
-                                                <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-                    <Button Name="btnRegret" FontSize="20"  Background="Blue" Foreground="White" Content="Regret" Click="btnRegret_Click" Margin="0,0,0,10" Visibility="Collapsed">
-                        <Button.Style>
-                            <Style TargetType="{x:Type Button}">
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="RenderTransformOrigin" Value="0.5, 0.5"/>
-                                        <Setter Property="RenderTransform">
-                                            <Setter.Value>
-                                                <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                    </Button>
+                    <TextBlock Name="GameControlTitle" Text="Founction Buttons: " FontFamily="Segoe Script" FontWeight="ExtraBold" FontSize="22"/>
+                    <Button Name="btnRestart" Content="Restart" Click="btnRestart_Click" Margin="0,0,0,10" Visibility="Collapsed" Style="{StaticResource MyButton}"/>
+                    <Button Name="btnStart" Content="Start" Click="btnStart_Click" Margin="0,0,0,10" Style="{StaticResource MyButton}"/>
+                    <Button Name="btnWithdraw" Content="Withdraw" Click="btnWithdraw_Click" Margin="0,0,0,10" Visibility="Collapsed" Style="{StaticResource MyButton}"/>
+                    <Button Name="btnRegret" Content="Regret" Click="btnRegret_Click" Margin="0,0,0,10" Visibility="Collapsed" Style="{StaticResource MyButton}"/>
                 </StackPanel>
+                
                 <StackPanel Name="ManualDemo" Visibility="Collapsed">
                     <Border BorderBrush="Blue" BorderThickness="0,2,0,0" Margin="0,15,0,25" Width="180"/>
                     <TextBlock Name="ManualDemoTitle" Text="Manual Demo: " FontWeight="Bold" FontSize="20" FontStyle="Italic" Margin="0,0,0,15"/>
-                    <Button Name="btnPlay" FontSize="20" Background="Blue" Foreground="White" Content="Play Manual" Click="btnPlay_Click" Margin="0,0,0,10" Visibility="Visible">
-                        <Button.Style>
-                            <Style TargetType="{x:Type Button}">
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="RenderTransformOrigin" Value="0.5, 0.5"/>
-                                        <Setter Property="RenderTransform">
-                                            <Setter.Value>
-                                                <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-                    <Button Name="btnSave"  FontSize="20" Content="Save Manual" Background="Blue"  Foreground="White" Click="btnSave_Click"  Margin="0,0,0,10">
-                        <Button.Style>
-                            <Style TargetType="{x:Type Button}">
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="RenderTransformOrigin" Value="0.5, 0.5"/>
-                                        <Setter Property="RenderTransform">
-                                            <Setter.Value>
-                                                <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-                    <Button Name="btnOpen" FontSize="20" Background="Blue" Foreground="White" Content="Open Manual" Click="btnOpen_Click" Margin="0,0,0,10" Visibility="Visible">
-                        <Button.Style>
-                            <Style TargetType="{x:Type Button}">
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="RenderTransformOrigin" Value="0.5, 0.5"/>
-                                        <Setter Property="RenderTransform">
-                                            <Setter.Value>
-                                                <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                    </Button>
+                    <Button Name="btnPlay" Content="Play Manual" Click="btnPlay_Click" Margin="0,0,0,10" Visibility="Visible" Style="{StaticResource MyButton}"/>
+                    <Button Name="btnSave" Content="Save Manual" Click="btnSave_Click"  Margin="0,0,0,10" Style="{StaticResource MyButton}"/>
+                    <Button Name="btnOpen" Content="Open Manual" Click="btnOpen_Click" Margin="0,0,0,10" Visibility="Visible" Style="{StaticResource MyButton}"/>
                     <StackPanel>
                         <StackPanel.Background>
                             <SolidColorBrush Color="AntiqueWhite" Opacity="0.8"/>
@@ -147,6 +44,7 @@
                     </StackPanel>
                     <Border BorderBrush="Blue" BorderThickness="0,2,0,0" Margin="0,15,0,25" Width="180"/>
                 </StackPanel>
+                
                 <StackPanel Name="Message" Visibility="Collapsed">
                     <StackPanel.Background>
                         <SolidColorBrush Color="AntiqueWhite" Opacity="0.8"/>
@@ -156,6 +54,7 @@
                     <TextBox Name="txtblkCrrClr" VerticalAlignment="Bottom" Margin="0,0,0,15" Foreground="White" FontSize="20" TextAlignment="Center" Visibility="Collapsed"/>
                     <TextBlock Name="txtblkMessage" Margin="0,0,0,15" FontWeight="Bold" FontSize="20" TextAlignment="Center" TextWrapping="Wrap"/>
                 </StackPanel>
+                
             </StackPanel>
         </StackPanel>
     </Grid>

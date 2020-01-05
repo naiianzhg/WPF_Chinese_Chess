@@ -10,63 +10,132 @@
 
   <ItemGroup>
     <Compile Remove="Display\**" />
+    <Compile Remove="Images\**" />
     <EmbeddedResource Remove="Display\**" />
+    <EmbeddedResource Remove="Images\**" />
     <None Remove="Display\**" />
+    <None Remove="Images\**" />
     <Page Remove="Display\**" />
+    <Page Remove="Images\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Images\background.jpg" />
-    <None Remove="Images\BlackAdvisor.png" />
-    <None Remove="Images\BlackCannon.png" />
-    <None Remove="Images\BlackElephant.png" />
-    <None Remove="Images\BlackGeneral.png" />
-    <None Remove="Images\BlackHorse.png" />
-    <None Remove="Images\BlackRook.png" />
-    <None Remove="Images\BlackSoldier.png" />
-    <None Remove="Images\ChosenBox.png" />
-    <None Remove="Images\EatBox.png" />
-    <None Remove="Images\EatenMoveBox.png" />
-    <None Remove="Images\logo.png" />
-    <None Remove="Images\logo_1.png" />
-    <None Remove="Images\OriLocationBox.png" />
-    <None Remove="Images\panel.png" />
-    <None Remove="Images\Panel_1.png" />
-    <None Remove="Images\RedAdvisor.png" />
-    <None Remove="Images\RedCannon.png" />
-    <None Remove="Images\RedElephant.png" />
-    <None Remove="Images\RedGeneral.png" />
-    <None Remove="Images\RedHorse.png" />
-    <None Remove="Images\RedRook.png" />
-    <None Remove="Images\RedSoldier.png" />
-    <None Remove="Images\ValidMoveBox.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Images\background.jpg" />
-    <Resource Include="Images\BlackAdvisor.png" />
-    <Resource Include="Images\BlackCannon.png" />
-    <Resource Include="Images\BlackElephant.png" />
-    <Resource Include="Images\BlackGeneral.png" />
-    <Resource Include="Images\BlackHorse.png" />
-    <Resource Include="Images\BlackRook.png" />
-    <Resource Include="Images\BlackSoldier.png" />
-    <Resource Include="Images\logo.png" />
-    <Resource Include="Images\OriLocationBox.png" />
-    <Resource Include="Images\panel.png" />
-    <Resource Include="Images\RedAdvisor.png" />
-    <Resource Include="Images\RedCannon.png" />
-    <Resource Include="Images\RedElephant.png" />
-    <Resource Include="Images\RedGeneral.png" />
-    <Resource Include="Images\RedHorse.png" />
-    <Resource Include="Images\RedRook.png" />
-    <Resource Include="Images\RedSoldier.png" />
-    <Resource Include="Images\ValidMoveBox.png" />
+    <None Remove="Resources\background.jpg" />
+    <None Remove="Resources\BlackAdvisor.png" />
+    <None Remove="Resources\BlackCannon.png" />
+    <None Remove="Resources\BlackElephant.png" />
+    <None Remove="Resources\BlackGeneral.png" />
+    <None Remove="Resources\BlackHorse.png" />
+    <None Remove="Resources\BlackRook.png" />
+    <None Remove="Resources\BlackSoldier.png" />
+    <None Remove="Resources\btnBackground.png" />
+    <None Remove="Resources\chooseAdvisor.mp3" />
+    <None Remove="Resources\chooseCannon.mp3" />
+    <None Remove="Resources\chooseElephant.mp3" />
+    <None Remove="Resources\chooseGeneral.mp3" />
+    <None Remove="Resources\chooseHorse.mp3" />
+    <None Remove="Resources\choosePieces.mp3" />
+    <None Remove="Resources\chooseRook.mp3" />
+    <None Remove="Resources\chooseSoldier.mp3" />
+    <None Remove="Resources\Logo.png" />
+    <None Remove="Resources\moveAdvisor.mp3" />
+    <None Remove="Resources\moveCannon.mp3" />
+    <None Remove="Resources\moveElephant.mp3" />
+    <None Remove="Resources\moveGeneral.mp3" />
+    <None Remove="Resources\moveHorse.mp3" />
+    <None Remove="Resources\movePieces.mp3" />
+    <None Remove="Resources\moveRook.mp3" />
+    <None Remove="Resources\moveSoldier.mp3" />
+    <None Remove="Resources\OriLocationBox.png" />
+    <None Remove="Resources\Panel.png" />
+    <None Remove="Resources\RedAdvisor.png" />
+    <None Remove="Resources\RedCannon.png" />
+    <None Remove="Resources\RedElephant.png" />
+    <None Remove="Resources\RedGeneral.png" />
+    <None Remove="Resources\RedHorse.png" />
+    <None Remove="Resources\RedRook.png" />
+    <None Remove="Resources\RedSoldier.png" />
+    <None Remove="Resources\ValidMoveBox.png" />
+    <None Remove="Resources\win.mp3" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Model\" />
     <Folder Include="Control\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\background.jpg" />
+    <Resource Include="Resources\BlackAdvisor.png" />
+    <Resource Include="Resources\BlackCannon.png" />
+    <Resource Include="Resources\BlackElephant.png" />
+    <Resource Include="Resources\BlackGeneral.png" />
+    <Resource Include="Resources\BlackHorse.png" />
+    <Resource Include="Resources\BlackRook.png" />
+    <Resource Include="Resources\BlackSoldier.png" />
+    <Resource Include="Resources\btnBackground.png" />
+    <Content Include="Resources\chooseAdvisor.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\chooseCannon.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\chooseElephant.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\chooseGeneral.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\chooseHorse.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\choosePieces.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\chooseRook.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\chooseSoldier.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Resources\Logo.png" />
+    <Content Include="Resources\moveAdvisor.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\moveCannon.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\moveElephant.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\moveGeneral.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\moveHorse.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\movePieces.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\moveRook.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\moveSoldier.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Resources\OriLocationBox.png" />
+    <Resource Include="Resources\Panel.png" />
+    <Resource Include="Resources\RedAdvisor.png" />
+    <Resource Include="Resources\RedCannon.png" />
+    <Resource Include="Resources\RedElephant.png" />
+    <Resource Include="Resources\RedGeneral.png" />
+    <Resource Include="Resources\RedHorse.png" />
+    <Resource Include="Resources\RedRook.png" />
+    <Resource Include="Resources\RedSoldier.png" />
+    <Resource Include="Resources\ValidMoveBox.png" />
+    <Content Include="Resources\win.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

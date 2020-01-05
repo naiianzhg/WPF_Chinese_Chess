@@ -58,6 +58,9 @@ namespace ChineseChess_G1
         // String to store manual
         public string manual;
 
+        // MediaPlayer to play sound effect
+        private MediaPlayer mediaPlayer = new MediaPlayer();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -113,7 +116,7 @@ namespace ChineseChess_G1
                 // Obtain every single piece from the chess panel
                 Image pieceImg = (Image)chessPanel.Children[i];
                 // If there is a piece stored on the chess board, draw it on the panel
-                if (piece != null) { pieceImg.Source = new BitmapImage(new Uri(piece.url, UriKind.RelativeOrAbsolute)); pieceImg.Opacity = 1; }
+                if (piece != null) { pieceImg.Source = new BitmapImage(new Uri(piece.imageUrl, UriKind.RelativeOrAbsolute)); pieceImg.Opacity = 1; }
                 // if not, draw null image on the panel
                 else pieceImg.Source = null;
                 i++;
@@ -134,13 +137,13 @@ namespace ChineseChess_G1
                 // after, the ancien move which need to be indicated will be the SECOND LAST location in the last ori location lost, the first last location is the cliking location
                 if (Board.lastOriLocationList.Count > 1 && validMove == Board.lastOriLocationList[Board.lastOriLocationList.Count - 2])
                 {
-                    validMoveImg.Source = new BitmapImage(new Uri("/Images/OriLocationBox.png", UriKind.RelativeOrAbsolute));
+                    validMoveImg.Source = new BitmapImage(new Uri("Resources/OriLocationBox.png", UriKind.RelativeOrAbsolute));
                     continue;
                 }
                 // If there is a piece in the valid move position, the piece will become transparent
                 if (Board.pieces[validMove / 10, validMove % 10] != null) validMoveImg.Opacity = 0.4;
                 // If the valid move position has no piece we put a ValidMoveBox
-                else validMoveImg.Source = new BitmapImage(new Uri("/Images/ValidMoveBox.png", UriKind.RelativeOrAbsolute));
+                else validMoveImg.Source = new BitmapImage(new Uri("Resources/ValidMoveBox.png", UriKind.RelativeOrAbsolute));
             }
         }
 
@@ -192,6 +195,9 @@ namespace ChineseChess_G1
         {
             if (MessageBox.Show("Are you sure?", "Restart Game", MessageBoxButton.YesNo,MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
+                // pause the win sound
+                mediaPlayer.Pause();
+
                 changeGameStatus(GameStatus.TO_CHOOSE);
                 // able to click
                 chessPanel.Cursor = Cursors.Arrow;
@@ -234,7 +240,7 @@ namespace ChineseChess_G1
                         if (Board.lastOriLocationList.Count > 0)
                         {
                             Image oriLocationImg = (Image)chessPanel.Children[9 * Board.getLastOriLocation()[0] + Board.getLastOriLocation()[1]];
-                            oriLocationImg.Source = new BitmapImage(new Uri("/Images/OriLocationBox.png", UriKind.RelativeOrAbsolute));
+                            oriLocationImg.Source = new BitmapImage(new Uri("Resources/OriLocationBox.png", UriKind.RelativeOrAbsolute));
                         }
                     }
                     catch (Exception excp)
@@ -269,7 +275,7 @@ namespace ChineseChess_G1
                         if (Board.lastOriLocationList.Count > 0)
                         {
                             Image oriLocationImg = (Image)chessPanel.Children[9 * Board.getLastOriLocation()[0] + Board.getLastOriLocation()[1]];
-                            oriLocationImg.Source = new BitmapImage(new Uri("/Images/OriLocationBox.png", UriKind.RelativeOrAbsolute));
+                            oriLocationImg.Source = new BitmapImage(new Uri("Resources/OriLocationBox.png", UriKind.RelativeOrAbsolute));
                         }
                     }
                     catch (Exception excp)
@@ -294,6 +300,9 @@ namespace ChineseChess_G1
                 {
                     case GameStatus.TO_CHOOSE:
                         PiecesHandler.chooseOri(imgRow, imgCol);
+                        // Choose sound effect
+                        mediaPlayer.Open(new Uri(Board.pieces[imgRow, imgCol].chooseSoundUrl, UriKind.RelativeOrAbsolute));
+                        mediaPlayer.Play();
                         drawValidMove();
                         changeGameStatus(GameStatus.TO_MOVE);
                         btnWithdraw.Cursor = Cursors.No;
@@ -310,15 +319,21 @@ namespace ChineseChess_G1
                             if (Board.lastOriLocationList.Count > 0)
                             {
                                 Image oriLocationImg = (Image)chessPanel.Children[9 * Board.getLastOriLocation()[0] + Board.getLastOriLocation()[1]];
-                                oriLocationImg.Source = new BitmapImage(new Uri("/Images/OriLocationBox.png", UriKind.RelativeOrAbsolute));
+                                oriLocationImg.Source = new BitmapImage(new Uri("Resources/OriLocationBox.png", UriKind.RelativeOrAbsolute));
                             }
                             PiecesHandler.chooseOri(imgRow, imgCol);
+                            // Choose sound effect
+                            mediaPlayer.Open(new Uri(Board.pieces[imgRow, imgCol].chooseSoundUrl, UriKind.RelativeOrAbsolute));
+                            mediaPlayer.Play();
                             drawValidMove();
                             break;
                         }
                         else
                         {
                             PiecesHandler.chooseDest(imgRow, imgCol);
+                            // Move sound effect
+                            mediaPlayer.Open(new Uri(Board.pieces[imgRow, imgCol].moveSoundUrl, UriKind.RelativeOrAbsolute));
+                            mediaPlayer.Play();
                             redrawCurrenColour();
                             // Re-draw the chances left on the regret button
                             btnRegret.Content =
@@ -328,7 +343,7 @@ namespace ChineseChess_G1
                             redrawPieces();
                             // Indicate the origin location with a blue box
                             Image oriLocationImg = (Image)chessPanel.Children[9 * Board.getLastOriLocation()[0] + Board.getLastOriLocation()[1]];
-                            oriLocationImg.Source = new BitmapImage(new Uri("/Images/OriLocationBox.png", UriKind.RelativeOrAbsolute));
+                            oriLocationImg.Source = new BitmapImage(new Uri("Resources/OriLocationBox.png", UriKind.RelativeOrAbsolute));
 
                             // If this move cause a CHECKMATE
                             if (GameRules.isCheckmate())
@@ -336,6 +351,9 @@ namespace ChineseChess_G1
                                 if (Board.currentColour % 2 == 0) MessageBox.Show("Red wins", "Congratulations", MessageBoxButton.OK, MessageBoxImage.Information);
                                 else if (Board.currentColour % 2 == 1) MessageBox.Show("Black wins", "Congratulations", MessageBoxButton.OK, MessageBoxImage.Information);
                                 changeGameStatus(GameStatus.GAME_OVER);
+                                // Win sound effect
+                                mediaPlayer.Open(new Uri("Resources/win.mp3", UriKind.RelativeOrAbsolute));
+                                mediaPlayer.Play();
                                 btnWithdraw.Cursor = Cursors.Arrow;
                                 btnRegret.Cursor = Cursors.Arrow;
                                 chessPanel.Cursor = Cursors.No;
@@ -366,7 +384,7 @@ namespace ChineseChess_G1
                 if (Board.lastOriLocationList.Count > 0)
                 {
                     Image oriLocationImg = (Image)chessPanel.Children[9 * Board.getLastOriLocation()[0] + Board.getLastOriLocation()[1]];
-                    oriLocationImg.Source = new BitmapImage(new Uri("/Images/OriLocationBox.png", UriKind.RelativeOrAbsolute));
+                    oriLocationImg.Source = new BitmapImage(new Uri("Resources/OriLocationBox.png", UriKind.RelativeOrAbsolute));
                 }
             }
         }
@@ -374,7 +392,7 @@ namespace ChineseChess_G1
         // TODO
         async Task putTaskDelay()
         {
-            await Task.Delay(1000);
+            await Task.Delay(1500);
         }
         private async void btnPlay_Click(object sender, RoutedEventArgs e)
         {   
@@ -393,13 +411,16 @@ namespace ChineseChess_G1
                     manualDestLocation[0] = Board.manualDestLocationList[i] / 10; manualDestLocation[1] = Board.manualDestLocationList[i] % 10;
                     // Save this chosen original location as last original location
                     Board.addLastOriLocation(manualOriLocation);
+                    // Move sound effect
+                    mediaPlayer.Open(new Uri(Board.pieces[manualOriLocation[0], manualOriLocation[1]].moveSoundUrl, UriKind.RelativeOrAbsolute));
+                    mediaPlayer.Play();
                     PiecesHandler.moveTo(manualOriLocation, manualDestLocation);
                     redrawPieces();
                     // Indicate the origin location with a blue box
                     if (Board.lastOriLocationList.Count > 0)
                     {
                         Image oriLocationImg = (Image)chessPanel.Children[9 * Board.getLastOriLocation()[0] + Board.getLastOriLocation()[1]];
-                        oriLocationImg.Source = new BitmapImage(new Uri("/Images/OriLocationBox.png", UriKind.RelativeOrAbsolute));
+                        oriLocationImg.Source = new BitmapImage(new Uri("Resources/OriLocationBox.png", UriKind.RelativeOrAbsolute));
                     }
                     await putTaskDelay();
                 }

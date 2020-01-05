@@ -12,7 +12,9 @@ namespace ChineseChess.Model
         // S,C,R,H,E,A,G
         public string type { get; }
         public List<int> validMoveList { get; set; }
-        public string url { get; set; }
+        public string imageUrl { get; set; }
+        public string chooseSoundUrl { get; set; }
+        public string moveSoundUrl { get; set; }
 
         public Pieces (int colour, string type)
         {
@@ -28,8 +30,10 @@ namespace ChineseChess.Model
         public Soldier(int colour) :
             base(colour, "S")
         {
-            if (colour == 1) url = "/Images/RedSoldier.png";
-            else url = "/Images/BlackSoldier.png";
+            chooseSoundUrl = "Resources/chooseSoldier.mp3";
+            moveSoundUrl = "Resources/moveSoldier.mp3";
+            if (colour == 1) imageUrl = "Resources/RedSoldier.png";
+            else imageUrl = "Resources/BlackSoldier.png";
         }
 
         public override List<int> calculateValidMoveList(int[] location)
@@ -104,8 +108,10 @@ namespace ChineseChess.Model
         public Cannon(int colour) :
             base(colour, "C")
         {
-            if (colour == 1) url = "/Images/RedCannon.png";
-            else url = "/Images/BlackCannon.png";
+            chooseSoundUrl = "Resources/chooseCannon.mp3";
+            moveSoundUrl = "Resources/moveCannon.mp3";
+            if (colour == 1) imageUrl = "Resources/RedCannon.png";
+            else imageUrl = "Resources/BlackCannon.png";
         }
 
         public object[] obj = new object[2];
@@ -202,8 +208,10 @@ namespace ChineseChess.Model
         public Rook(int colour) :
             base(colour, "R")
         {
-            if (colour == 1) url = "/Images/RedRook.png";
-            else url = "/Images/BlackRook.png";
+            chooseSoundUrl = "Resources/chooseRook.mp3";
+            moveSoundUrl = "Resources/moveRook.mp3";
+            if (colour == 1) imageUrl = "Resources/RedRook.png";
+            else imageUrl = "Resources/BlackRook.png";
         }
 
         public List<int> addColumnValidMove(int i, int[] location, List<int> validMoveList, out bool block)
@@ -299,8 +307,10 @@ namespace ChineseChess.Model
         public Horse(int colour) :
             base(colour, "H")
         {
-            if (colour == 1) url = "/Images/RedHorse.png";
-            else url = "/Images/BlackHorse.png";
+            chooseSoundUrl = "Resources/chooseHorse.mp3";
+            moveSoundUrl = "Resources/moveHorse.mp3";
+            if (colour == 1) imageUrl = "Resources/RedHorse.png";
+            else imageUrl = "Resources/BlackHorse.png";
         }
 
         public override List<int> calculateValidMoveList(int[] location)
@@ -381,8 +391,10 @@ namespace ChineseChess.Model
         public Elephant(int colour) :
             base(colour, "E")
         {
-            if (colour == 1) url = "/Images/RedElephant.png";
-            else url = "/Images/BlackElephant.png";
+            chooseSoundUrl = "Resources/chooseElephant.mp3";
+            moveSoundUrl = "Resources/moveElephant.mp3";
+            if (colour == 1) imageUrl = "Resources/RedElephant.png";
+            else imageUrl = "Resources/BlackElephant.png";
         }
 
         // Collect the possible ↖ move
@@ -487,8 +499,10 @@ namespace ChineseChess.Model
         public Advisor(int colour) :
             base(colour, "A")
         {
-            if (colour == 1) url = "/Images/RedAdvisor.png";
-            else url = "/Images/BlackAdvisor.png";
+            chooseSoundUrl = "Resources/chooseAdvisor.mp3";
+            moveSoundUrl = "Resources/moveAdvisor.mp3";
+            if (colour == 1) imageUrl = "Resources/RedAdvisor.png";
+            else imageUrl = "Resources/BlackAdvisor.png";
         }
 
         public override List<int> calculateValidMoveList(int[] location)
@@ -538,8 +552,10 @@ namespace ChineseChess.Model
         public General(int colour) :
             base(colour, "G")
         {
-            if (colour == 1) url = "/Images/RedGeneral.png";
-            else url = "/Images/BlackGeneral.png";
+            chooseSoundUrl = "Resources/chooseGeneral.mp3";
+            moveSoundUrl = "Resources/moveGeneral.mp3";
+            if (colour == 1) imageUrl = "Resources/RedGeneral.png";
+            else imageUrl = "Resources/BlackGeneral.png";
         }
 
         public bool isBlocked(int colour, int[] location)
