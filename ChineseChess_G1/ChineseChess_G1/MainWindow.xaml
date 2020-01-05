@@ -33,7 +33,6 @@
                     <Border BorderBrush="Blue" BorderThickness="0,2,0,0" Margin="0,15,0,25" Width="180"/>
                     <TextBlock Name="ManualDemoTitle" Text="Manual Demo: " FontWeight="Bold" FontSize="20" FontStyle="Italic" Margin="0,0,0,15"/>
                     <Button Name="btnPlay" Content="Play Manual" Click="btnPlay_Click" Margin="0,0,0,10" Visibility="Visible" Style="{StaticResource MyButton}"/>
-                    <Button Name="btnSave" Content="Save Manual" Click="btnSave_Click"  Margin="0,0,0,10" Style="{StaticResource MyButton}"/>
                     <Button Name="btnOpen" Content="Open Manual" Click="btnOpen_Click" Margin="0,0,0,10" Visibility="Visible" Style="{StaticResource MyButton}"/>
                     <StackPanel>
                         <StackPanel.Background>

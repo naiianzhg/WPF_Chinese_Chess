@@ -19,27 +19,22 @@ namespace ChineseChess.Control
         public static bool isChecked()
         {
             // Get the position of the general, and find out if there is a checked on the board
-            int[] redGeneralLocation = Board.getRedGeneralPosition(), blkGeneralLocation = Board.getBlkGeneralPosition();
-            
-            // chked[0] = black is checked or not, chked[1] = red is checked or not
-            bool[] chked = new bool[2];
-            bool check = false;
-            
+            int[] redGeneralLocation = Board.redGeneralPosition, blkGeneralLocation = Board.blkGeneralPosition;
+
             // Calculate the valid moves of all the pieces
             for (int row = 0; row < Board.pieces.GetLength(0); row++)
             {
                 for (int col = 0; col < Board.pieces.GetLength(1); col++)
                 {
-                    if (!check && Board.pieces[row, col] != null && Board.pieces[row, col].colour != Board.currentColour % 2)
+                    if (Board.pieces[row, col] != null && Board.pieces[row, col].colour != Board.currentColour % 2)
                     {
                         if (Board.currentColour % 2 == 0 && Board.pieces[row, col].calculateValidMoveList(new int[] { row, col }).Contains(blkGeneralLocation[0] * 10 + blkGeneralLocation[1]) ||
                             Board.currentColour % 2 == 1 && Board.pieces[row, col].calculateValidMoveList(new int[] { row, col }).Contains(redGeneralLocation[0] * 10 + redGeneralLocation[1]))
-                            check = true;
+                            return true;
                     }
                 }
             }
-
-            return check;
+            return false;
         }
 
         // when one team is checked, if all valid moves of all the pieces from this team are not able to avoid cheked, it is a checkmate

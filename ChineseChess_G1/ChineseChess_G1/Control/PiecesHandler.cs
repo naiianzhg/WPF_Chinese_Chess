@@ -77,23 +77,20 @@ namespace ChineseChess.Control
         // The real moving operation, the eaten piece will be stored
         public static void moveTo(int[] oriLocation, int[] destLocation)
         {
-            // Move the chosen piece to the destination and reset the original position to null
-            Pieces temp = Board.pieces[oriLocation[0], oriLocation[1]];
-            Board.pieces[oriLocation[0], oriLocation[1]] = null;
             // If there is a piece in destLocation which will be eaten, store its position else store null
-            if (Board.pieces[destLocation[0], destLocation[1]] != null)
-                Board.addLastEatenPiece(Board.pieces[destLocation[0], destLocation[1]]);
-            else Board.addLastEatenPiece(null);
-            Board.pieces[destLocation[0], destLocation[1]] = temp;
+            Board.addLastEatenPiece(Board.pieces[destLocation[0], destLocation[1]]);
+            // Move the chosen piece to the destination and reset the original position to null
+            Board.pieces[destLocation[0], destLocation[1]] = Board.pieces[oriLocation[0], oriLocation[1]];
+            Board.pieces[oriLocation[0], oriLocation[1]] = null;
+            Board.piecesCollection();
         }
 
         // This virtualMoveTo method is for calculating dangerous move or regret move back, there is no eaten piece storing inside so that it is called traceless
         public static void tracelessMoveTo(int[] oriLocation, int[] destLocation)
         {
             // Move the chosen piece to the destination and reset the original position to null
-            Pieces temp = Board.pieces[oriLocation[0], oriLocation[1]];
+            Board.pieces[destLocation[0], destLocation[1]] = Board.pieces[oriLocation[0], oriLocation[1]];
             Board.pieces[oriLocation[0], oriLocation[1]] = null;
-            Board.pieces[destLocation[0], destLocation[1]] = temp;
         }
 
         // This method is to read the moves in the manual
@@ -128,6 +125,24 @@ namespace ChineseChess.Control
             }
             Board.manualOriLocationList = oriLocationList;
             Board.manualDestLocationList = destLocationList;
+        }
+
+        // When time runs out, automatically move for the player
+        public void randomMove()
+        {
+            List<int> canChoose, canMove;
+            if (Board.currentColour % 2 == 0) { canChoose = Board.blkPieces; }
+            else { canChoose = Board.redPieces; }
+            Random rd = new Random();
+            int i = rd.Next(canChoose.Count - 1);
+            int x = canChoose[i] / 10;
+            int y = canChoose[i] % 10;
+            // Save this chosen original location as last original location
+            chooseOri(x, y);
+            canMove = Board.pieces[x, y].calculateValidMoveList(new int[] { x, y });
+            int j = rd.Next(canMove.Count - 1);
+            chooseDest(canMove[j] / 10, canMove[j] % 10);
+            // TODO: xaml.cs catch the suicide move exception, continue do the move, and show that the other team wins
         }
     }
 }

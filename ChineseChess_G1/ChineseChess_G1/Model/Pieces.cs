@@ -16,14 +16,23 @@ namespace ChineseChess.Model
         public string chooseSoundUrl { get; set; }
         public string moveSoundUrl { get; set; }
 
-        public Pieces (int colour, string type)
+        public Pieces(int colour, string type)
         {
             this.colour = colour;
             this.type = type;
         }
 
-        public abstract List<int> calculateValidMoveList (int[] location);
-    } 
+        public abstract List<int> calculateValidMoveList(int[] location);
+        //this is for checking the possible position has no piece or has a not-black piece(eat)
+        public List<int> addValidMove(int x, int y, List<int> list)
+        {
+            if (Board.pieces[x, y] == null || Board.pieces[x, y].colour != colour)
+            {
+                list.Add(x * 10 + y);
+            }
+            return list;
+        }
+    }
 
     class Soldier : Pieces
     {
@@ -38,67 +47,30 @@ namespace ChineseChess.Model
 
         public override List<int> calculateValidMoveList(int[] location)
         {
+            int x = location[0];
+            int y = location[1];
             // Initialize the valideMove List
             validMoveList = new List<int>();
 
-           // The piece color
-            if (colour == 1) // if it is a red piece
+            if (colour % 2 == 0 & x < 9)
             {
-                // if cross the river
-                if (location[0] > 4) // not yet cross
-                {
-                    if (Board.pieces[location[0] - 1, location[1]] == null || Board.pieces[location[0] - 1, location[1]].colour != colour) // possible position has no piece or has a not-black piece(eat)
-                    {
-                        validMoveList.Add((location[0] - 1) * 10 + location[1]); // only forward
-                    }
-                } else if (location[0] <= 4) // it did cross
-                {
-                    // if the piece is not on the buttom boarder
-                    if (location[0] != 0 && (Board.pieces[location[0] - 1, location[1]] == null || Board.pieces[location[0] - 1, location[1]].colour != colour))
-                    {
-                        validMoveList.Add((location[0] - 1) * 10 + location[1]); // 1. forward
-                    }
-                    // if the piece is not on the left boarder
-                    if (location[1] != 0 && (Board.pieces[location[0], location[1] - 1] == null || Board.pieces[location[0], location[1] - 1].colour != colour))
-                    {
-                        validMoveList.Add(location[0] * 10 + location[1] - 1); // 2. left
-                    }
-                    // if the piece is not on the right boarder
-                    if (location[1] != 8 && (Board.pieces[location[0], location[1] + 1] == null || Board.pieces[location[0], location[1] + 1].colour != colour))
-                    {
-                        validMoveList.Add(location[0] * 10 + location[1] + 1); // 3. right
-                    }
-                }
-            } else // else if it is a black piece
+                validMoveList = addValidMove(x + 1, y, validMoveList);
+            }
+            if (colour % 2 == 1 & x > 0)
             {
-                // if cross the river
-                if (location[0] < 5) // not yet cross
+                validMoveList = addValidMove(x - 1, y, validMoveList);
+            }
+            if ((colour % 2 == 1 & x < 5) | (colour % 2 == 0 & x > 4))
+            {
+                if (y != 0)
                 {
-                    if (Board.pieces[location[0] + 1, location[1]] == null || Board.pieces[location[0] + 1, location[1]].colour != colour) // possible position has no piece or has a not-black piece(eat)
-                    {
-                        validMoveList.Add((location[0] + 1) * 10 + location[1]); // only forward
-                    }
+                    validMoveList = addValidMove(x, y - 1, validMoveList);
                 }
-                else if (location[0] >= 5) // it did cross
+                if (y != 8)
                 {
-                    // if the piece is not on the buttom boarder
-                    if (location[0] != 9 && (Board.pieces[location[0] + 1, location[1]] == null || Board.pieces[location[0] + 1, location[1]].colour != colour))
-                    {
-                        validMoveList.Add((location[0] + 1) * 10 + location[1]); // 1. forward
-                    }
-                    // if the piece is not on the left boarder
-                    if (location[1] != 0 && (Board.pieces[location[0], location[1] - 1] == null || Board.pieces[location[0], location[1] - 1].colour != colour))
-                    {
-                        validMoveList.Add(location[0] * 10 + location[1] - 1); // 2. left
-                    }
-                    // if the piece is not on the right boarder
-                    if (location[1] != 8 && (Board.pieces[location[0], location[1] + 1] == null || Board.pieces[location[0], location[1] + 1].colour != colour))
-                    {
-                        validMoveList.Add(location[0] * 10 + location[1] + 1); // 3. right
-                    }
+                    validMoveList = addValidMove(x, y + 1, validMoveList);
                 }
             }
-
             return validMoveList;
         }
     }
@@ -198,7 +170,7 @@ namespace ChineseChess.Model
                 count = (int)obj[1];
             }
             count = 0;
-            
+
             return validMoveList;
         }
     }
@@ -213,90 +185,33 @@ namespace ChineseChess.Model
             if (colour == 1) imageUrl = "Resources/RedRook.png";
             else imageUrl = "Resources/BlackRook.png";
         }
-
-        public List<int> addColumnValidMove(int i, int[] location, List<int> validMoveList, out bool block)
-        {
-            block = false;
-            if (Board.pieces[i, location[1]] != null && Board.pieces[i, location[1]].colour == colour)
-            {
-                block = true;
-            } else if (Board.pieces[i, location[1]] == null)
-            {
-                validMoveList.Add(10 * i + location[1]);
-            } else if (Board.pieces[i, location[1]] != null && Board.pieces[i, location[1]].colour != colour)
-            {
-                validMoveList.Add(10 * i + location[1]);
-                block = true;
-            }
-            return validMoveList;
-        }
-
-        public List<int> addRowValidMove(int j, int[] location, List<int> validMoveList, out bool block)
-        {
-            block = false;
-            if (Board.pieces[location[0], j] != null && Board.pieces[location[0], j].colour == colour)
-            {
-                block = true;
-            } else if (Board.pieces[location[0], j] == null)
-            {
-                validMoveList.Add(10 * location[0] + j);
-            } else if (Board.pieces[location[0], j] != null && Board.pieces[location[0], j].colour != colour)
-            {
-                validMoveList.Add(10 * location[0] + j);
-                block = true;
-            }
-            return validMoveList;
-        }
-
         public override List<int> calculateValidMoveList(int[] location)
         {
+            int x = location[0];
+            int y = location[1];
             // Initialize the valideMove List
             validMoveList = new List<int>();
-            bool block = false;
-
-            // UP Column possible moves
-            for (int i = location[0] - 1; i >= 0; i--)
+            for (int i = 1; i <= x; i++)
             {
-                validMoveList = addColumnValidMove(i, location, validMoveList, out block);
-                if (block)
-                {
-                    break;
-                }
+                if (Board.pieces[x - i, y] != null) break;
+                validMoveList = addValidMove(x - i, y, validMoveList);
             }
-            block = false;
-
-            // DOWN Column possible moves
-            for (int i = location[0] + 1; i <= 9; i++)
+            for (int i = 1; i <= 9 - x; i++)
             {
-                validMoveList = addColumnValidMove(i, location, validMoveList, out block);
-                if (block)
-                {
-                    break;
-                }
-            }
-            block = false;
+                if (Board.pieces[x + i, y] != null) break;
+                validMoveList = addValidMove(x + i, y, validMoveList);
 
-            // RIGHT Row possible moves
-            for (int j = location[1] + 1; j <= 8; j++)
-            {
-                validMoveList = addRowValidMove(j, location, validMoveList, out block);
-                if (block)
-                {
-                    break;
-                }
             }
-            block = false;
-
-            // LEFT Row possible moves
-            for (int j = location[1] - 1; j >= 0; j--)
+            for (int i = 1; i <= y; i++)
             {
-                validMoveList = addRowValidMove(j, location, validMoveList, out block);
-                if (block)
-                {
-                    break;
-                }
+                if (Board.pieces[x, y - i] != null) break;
+                validMoveList = addValidMove(x, y - i, validMoveList);
             }
-            block = false;
+            for (int i = 1; i <= 8 - y; i++)
+            {
+                if (Board.pieces[x, y + i] != null) break;
+                validMoveList = addValidMove(x, y + i, validMoveList);
+            }
 
             return validMoveList;
         }
@@ -315,70 +230,69 @@ namespace ChineseChess.Model
 
         public override List<int> calculateValidMoveList(int[] location)
         {
+            int x = location[0];
+            int y = location[1];
             // Initialize the valideMove List
             validMoveList = new List<int>();
 
             // Cannot be on the buttom boarder or have distance of 1 from the boarder - Upward moving
             // if there is piece blocking the route forward
-            if (location[0] > 1 && Board.pieces[location[0] - 1, location[1]] == null)
+            if (x > 1 && Board.pieces[x - 1, y] == null)
             {
                 // Detecte the position (x-2, y+1)
-                if (location[1] != 8 && (Board.pieces[location[0] - 2, location[1] + 1] == null || Board.pieces[location[0] - 2, location[1] + 1].colour != colour))
+                if (y < 8)
                 {
-                    validMoveList.Add((location[0] - 2) * 10 + location[1] + 1);
+                    validMoveList = addValidMove(x - 2, y + 1, validMoveList);
                 }
                 // Also detecte the position (x-2, y-1)
-                if (location[1] != 0 && (Board.pieces[location[0] - 2, location[1] - 1] == null || Board.pieces[location[0] - 2, location[1] - 1].colour != colour))
+                if (y > 0)
                 {
-                    validMoveList.Add((location[0] - 2) * 10 + location[1] - 1);
+                    validMoveList = addValidMove(x - 2, y - 1, validMoveList);
                 }
             }
-
             // Cannot be on the buttom boarder or have distance of 1 from the boarder - Downward moving
             // if there is piece blocking the route forward
-            if (location[0] < 8 && Board.pieces[location[0] + 1, location[1]] == null)
+            if (x < 8 && Board.pieces[x + 1, y] == null)
             {
                 // Detecte the position (x+2, y+1)
-                if (location[1] != 8 && (Board.pieces[location[0] + 2, location[1] + 1] == null || Board.pieces[location[0] + 2, location[1] + 1].colour != colour))
+                if (y < 8)
                 {
-                    validMoveList.Add((location[0] + 2) * 10 + location[1] + 1);
+                    validMoveList = addValidMove(x + 2, y + 1, validMoveList);
                 }
                 // Also detecte the position (x+2, y-1)
-                if (location[1] != 0 && (Board.pieces[location[0] + 2, location[1] - 1] == null || Board.pieces[location[0] + 2, location[1] - 1].colour != colour))
+                if (y > 0)
                 {
-                    validMoveList.Add((location[0] + 2) * 10 + location[1] - 1);
+                    validMoveList = addValidMove(x + 2, y - 1, validMoveList);
                 }
             }
-
             // Cannot be on the buttom boarder or have distance of 1 from the boarder - Leftward moving
             // if there is piece blocking the route forward
-            if (location[1] > 1 && Board.pieces[location[0], location[1] - 1] == null)
+            if (y > 1 && Board.pieces[x, y - 1] == null)
             {
                 // Detecte the position (x+1, y-2)
-                if (location[0] != 9 && (Board.pieces[location[0] + 1, location[1] - 2] == null || Board.pieces[location[0] + 1, location[1] - 2].colour != colour))
+                if (x < 9)
                 {
-                    validMoveList.Add((location[0] + 1) * 10 + location[1] - 2);
+                    validMoveList = addValidMove(x + 1, y - 2, validMoveList);
                 }
                 // Also detecte the position (x-1, y-2)
-                if (location[0] != 0 && (Board.pieces[location[0] - 1, location[1] - 2] == null || Board.pieces[location[0] - 1, location[1] - 2].colour != colour))
+                if (x > 0)
                 {
-                    validMoveList.Add((location[0] - 1) * 10 + location[1] - 2);
+                    validMoveList = addValidMove(x - 1, y - 2, validMoveList);
                 }
             }
-
             // Cannot be on the buttom boarder or have distance of 1 from the boarder - Rightward moving
             // if there is piece blocking the route forward
-            if (location[1] < 7 && Board.pieces[location[0], location[1] + 1] == null)
+            if (y < 7 && Board.pieces[x, y + 1] == null)
             {
                 // Detecte the position (x+1, y+2)
-                if (location[0] != 9 && (Board.pieces[location[0] + 1, location[1] + 2] == null || Board.pieces[location[0] + 1, location[1] + 2].colour != colour))
+                if (x < 9)
                 {
-                    validMoveList.Add((location[0] + 1) * 10 + location[1] + 2);
+                    validMoveList = addValidMove(x + 1, y + 2, validMoveList);
                 }
                 // Also detecte the position (x-1, y+2)
-                if (location[0] != 0 && (Board.pieces[location[0] - 1, location[1] + 2] == null || Board.pieces[location[0] - 1, location[1] + 2].colour != colour))
+                if (x > 0)
                 {
-                    validMoveList.Add((location[0] - 1) * 10 + location[1] + 2);
+                    validMoveList = addValidMove(x - 1, y + 2, validMoveList);
                 }
             }
 
@@ -397,97 +311,36 @@ namespace ChineseChess.Model
             else imageUrl = "Resources/BlackElephant.png";
         }
 
-        // Collect the possible ↖ move
-        public List<int> addTLValidMove(int[] location, List<int> validMoveList)
-        {
-            if (Board.pieces[location[0] - 2, location[1] - 2] == null || Board.pieces[location[0] - 2, location[1] - 2].colour != colour)
-                {
-                validMoveList.Add((location[0] - 2) * 10 + location[1] - 2);
-            }
-            return validMoveList;
-        }
-
-        // Collect the possible ↗ move
-        public List<int> addTRValidMove(int[] location, List<int> validMoveList)
-        {
-            if (Board.pieces[location[0] - 2, location[1] + 2] == null || Board.pieces[location[0] - 2, location[1] + 2].colour != colour)
-            {
-                validMoveList.Add((location[0] - 2) * 10 + location[1] + 2);
-            }
-            return validMoveList;
-        }
-
-        // Collect the possible ↙ move
-        public List<int> addBLValidMove(int[] location, List<int> validMoveList)
-        {
-            if (Board.pieces[location[0] + 2, location[1] - 2] == null || Board.pieces[location[0] + 2, location[1] - 2].colour != colour)
-            {
-                validMoveList.Add((location[0] + 2) * 10 + location[1] - 2);
-            }
-            return validMoveList;
-        }
-
-        // Collect the possible ↘ move
-        public List<int> addBRValidMove(int[] location, List<int> validMoveList)
-        {
-            if (Board.pieces[location[0] + 2, location[1] + 2] == null || Board.pieces[location[0] + 2, location[1] + 2].colour != colour)
-            {
-                validMoveList.Add((location[0] + 2) * 10 + location[1] + 2);
-            }
-            return validMoveList;
-        }
-
         public override List<int> calculateValidMoveList(int[] location)
         {
-            // Initialize the valideMove List
+            int x = location[0];
+            int y = location[1];
             validMoveList = new List<int>();
 
-            // Elephant can only move in its own side
-            // Cannot be on the buttom boarder or cross the river - ↖ moving
-            // if there is piece blocking the route
-            // For the Red Elephants, detecte the position (x-2, y-2)
-            if (colour == 1 && location[1] != 0 && location[0] != 5 && Board.pieces[location[0] - 1, location[1] - 1] == null)
+            //Red or Black elephants has their own moving independent zoo, below is checking if the piece is in the edge of their own zoo to prevent it going outside.
+
+            if (x != 4 & x != 9)
             {
-                validMoveList = addTLValidMove(location, validMoveList);
-            } else if (colour == 0 && location[1] != 0 && location[0] != 0 && Board.pieces[location[0] - 1, location[1] - 1] == null) // For the Black Elephants, detecte the position (x-2, y-2)
-            {
-                validMoveList = addTLValidMove(location, validMoveList);
+                if (y != 0 && Board.pieces[x + 1, y - 1] == null)
+                {
+                    validMoveList = addValidMove(x + 2, y - 2, validMoveList);
+                }
+                if (y != 8 && Board.pieces[x + 1, y + 1] == null)
+                {
+                    validMoveList = addValidMove(x + 2, y + 2, validMoveList);
+                }
             }
 
-            // Cannot be on the buttom boarder or cross the river - ↗ moving
-            // if there is piece blocking the route
-            // For the Red Elephants, detecte the position (x-2, y+2)
-            if (colour == 1 && location[1] != 8 && location[0] != 5 && Board.pieces[location[0] - 1, location[1] + 1] == null)
+            if (x != 0 & x != 5)
             {
-                validMoveList = addTRValidMove(location, validMoveList);
-            }
-            else if (colour == 0 && location[1] != 8 && location[0] != 0 && Board.pieces[location[0] - 1, location[1] + 1] == null) // For the Black Elephants, detecte the position (x-2, y+2)
-            {
-                validMoveList = addTRValidMove(location, validMoveList);
-            }
-
-            // Cannot be on the buttom boarder or have distance of 1 from the boarder - ↙ moving
-            // if there is piece blocking the route forward
-            // For the Red Elephants, detecte the position (x+2, y-2)
-            if (colour == 1 && location[1] != 0 && location[0] != 9 && Board.pieces[location[0] + 1, location[1] - 1] == null)
-            {
-                validMoveList = addBLValidMove(location, validMoveList);
-            }
-            else if (colour == 0 && location[1] != 0 && location[0] != 4 && Board.pieces[location[0] + 1, location[1] - 1] == null) // For the Black Elephants, detecte the position (x+2, y-2)
-            {
-                validMoveList = addBLValidMove(location, validMoveList);
-            }
-
-            // Cannot be on the buttom boarder or have distance of 1 from the boarder - ↘ moving
-            // if there is piece blocking the route forward
-            // For the Red Elephants, detecte the position (x+2, y+2)
-            if (colour == 1 && location[1] != 8 && location[0] != 9 && Board.pieces[location[0] + 1, location[1] + 1] == null)
-            {
-                validMoveList = addBRValidMove(location, validMoveList);
-            }
-            else if (colour == 0 && location[1] != 8 && location[0] != 4 && Board.pieces[location[0] + 1, location[1] + 1] == null) // For the Black Elephants, detecte the position (x+2, y+2)
-            {
-                validMoveList = addBRValidMove(location, validMoveList);
+                if (y != 0 && Board.pieces[x - 1, y - 1] == null)
+                {
+                    validMoveList = addValidMove(x - 2, y - 2, validMoveList);
+                }
+                if (y != 8 && Board.pieces[x - 1, y + 1] == null)
+                {
+                    validMoveList = addValidMove(x - 2, y + 2, validMoveList);
+                }
             }
 
             return validMoveList;
@@ -507,39 +360,31 @@ namespace ChineseChess.Model
 
         public override List<int> calculateValidMoveList(int[] location)
         {
+            int x = location[0];
+            int y = location[1];
+            int[] a = { 1, -1 };
             validMoveList = new List<int>();
 
-            // If the piece is on the center of the grid
-            if (location[1] == 4)
+            // If the piece is on the center of the grid,it can move  
+            if (y == 4)
             {
-                // The ↖ move
-                if (Board.pieces[location[0] - 1, location[1] - 1] == null || Board.pieces[location[0] - 1, location[1] -1].colour != colour)
+                foreach (int i in a)
                 {
-                    validMoveList.Add((location[0] - 1) * 10 + location[1] - 1);
+                    foreach (int j in a)
+                    {
+                        validMoveList = addValidMove(x + i, y + i, validMoveList);
+                    }
                 }
-                // The ↗ move
-                if (Board.pieces[location[0] - 1, location[1] + 1] == null || Board.pieces[location[0] - 1, location[1] + 1].colour != colour)
-                {
-                    validMoveList.Add((location[0] - 1) * 10 + location[1] + 1);
-                }
-                // The ↙ move
-                if (Board.pieces[location[0] + 1, location[1] - 1] == null || Board.pieces[location[0] + 1, location[1] - 1].colour != colour)
-                {
-                    validMoveList.Add((location[0] + 1) * 10 + location[1] - 1);
-                }
-                // The ↘ move
-                if (Board.pieces[location[0] + 1, location[1] + 1] == null || Board.pieces[location[0] + 1, location[1] + 1].colour != colour)
-                {
-                    validMoveList.Add((location[0] + 1) * 10 + location[1] + 1);
-                }
-            } else // Otherwise, the piece will be on the corner of the grid
+            }
+            else // Otherwise, the piece will be on the corner of the grid
             {
-                if (colour == 1 && (Board.pieces[8, 4] == null || Board.pieces[8, 4].colour != colour))
+                if (colour == 1)
                 {
-                    validMoveList.Add(84);
-                } else if (colour == 0 && (Board.pieces[1, 4] == null || Board.pieces[1, 4].colour != colour))
+                    validMoveList = addValidMove(8, 4, validMoveList);
+                }
+                else if (colour == 0)
                 {
-                    validMoveList.Add(14);
+                    validMoveList = addValidMove(1, 4, validMoveList);
                 }
             }
 
@@ -557,110 +402,63 @@ namespace ChineseChess.Model
             if (colour == 1) imageUrl = "Resources/RedGeneral.png";
             else imageUrl = "Resources/BlackGeneral.png";
         }
-
-        public bool isBlocked(int colour, int[] location)
-        {
-            bool block = false;
-            // Detecte if there exists a piece on the column between the two generals, if so it is blocked
-            if (colour == 1)
-            {
-                for (int row = location[0]-1; row >= Board.getBlkGeneralPosition()[0]; row--)
-                {
-                    if (Board.pieces[row, location[1]] != null && Board.pieces[row, location[1]].GetType() != typeof(General))
-                    {
-                        block = true;
-                        break;
-                    }
-                }
-            } else
-            {
-                for (int row = location[0]+1; row <= Board.getRedGeneralPosition()[0]; row++)
-                {
-                    if (Board.pieces[row, location[1]] != null && Board.pieces[row, location[1]].GetType() != typeof(General))
-                    {
-                        block = true;
-                        break;
-                    }
-                }
-            }
-            return block;
-        }
-
-        public List<int> addFlyingGeneral(int colour, List<int> validMoveList)
-        {
-            int[] redGeneralPosition = Board.getRedGeneralPosition(), blkGeneralPosition = Board.getBlkGeneralPosition();
-            if (redGeneralPosition[1] == blkGeneralPosition[1])
-            {
-                if (colour == 1) validMoveList.Add(blkGeneralPosition[0] * 10 + blkGeneralPosition[1]);
-                else validMoveList.Add(redGeneralPosition[0] * 10 + redGeneralPosition[1]);
-            }
-            return validMoveList;
-        }
-
-        public List<int> addUpValidMove(int colour, int[] location, List<int> validMoveList)
-        {
-            if (location[0] != 7 && location[0] != 0 &&
-              (Board.pieces[location[0] - 1, location[1]] == null || Board.pieces[location[0] - 1, location[1]].colour != colour))
-            {
-                validMoveList.Add((location[0] - 1) * 10 + location[1]);
-            }
-            return validMoveList;
-        }
-
-        public List<int> addDownValidMove(int colour,int[] location, List<int> validMoveList)
-        {
-            if (location[0] != 9 && location[0] != 2 &&
-              (Board.pieces[location[0] + 1, location[1]] == null || Board.pieces[location[0] + 1, location[1]].colour != colour))
-            {
-                validMoveList.Add((location[0] + 1) * 10 + location[1]);
-            }
-            return validMoveList;
-        }
-
-        public List<int> addLeftValidMove(int colour, int[] location, List<int> validMoveList)
-        {
-            if (location[1] != 3 &&
-                (Board.pieces[location[0], location[1] - 1] == null || Board.pieces[location[0], location[1] - 1].colour != colour))
-            {
-                validMoveList.Add(location[0] * 10 + location[1] - 1);
-            }
-            return validMoveList;
-        }
-
-        public List<int> addRightValidMove(int colour, int[] location, List<int> validMoveList)
-        {
-            if (location[1] != 5 &&
-                (Board.pieces[location[0], location[1] + 1] == null || Board.pieces[location[0], location[1] + 1].colour != colour))
-            {
-                validMoveList.Add(location[0] * 10 + location[1] + 1);
-            }
-            return validMoveList;
-        }
-
         public override List<int> calculateValidMoveList(int[] location)
         {
+            int x = location[0];
+            int y = location[1];
             validMoveList = new List<int>();
 
-            // Flying general
-            if (!isBlocked(colour, location))
+            // check if this general can fly to eat the other by traverse the colume of this general
+
+            if (colour == 1)
             {
-                validMoveList = addFlyingGeneral(colour, validMoveList);
+                for (int i = x - 1; i > 0; i--)
+                {
+                    if (Board.pieces[i, y] != null)
+                    {
+                        if (Board.pieces[i, y].GetType() == typeof(General))
+                        {
+                            validMoveList.Add(i * 10 + y);
+                        }
+                        else break;
+                    }
+                }
+            }
+            else
+            {
+                for (int i = x + 1; i < 9; i++)
+                {
+                    if (Board.pieces[i, y] != null)
+                    {
+                        if (Board.pieces[i, y].GetType() == typeof(General))
+                        {
+                            validMoveList.Add(i * 10 + y);
+                        }
+                        else break;
+                    }
+                }
             }
 
-            // Upward moving
-            validMoveList = addUpValidMove(colour, location, validMoveList);
-
-            // Downward moving
-            validMoveList = addDownValidMove(colour, location, validMoveList);
-
-            // Leftward moving
-            validMoveList = addLeftValidMove(colour, location, validMoveList);
-
-            // Rightward moving
-            validMoveList = addRightValidMove(colour, location, validMoveList);
+            // find the normal moving by checking if it is in the edge of general's zoo
+            if (y != 3)
+            {
+                validMoveList = addValidMove(x, y - 1, validMoveList);
+            }
+            if (y != 5)
+            {
+                validMoveList = addValidMove(x, y + 1, validMoveList);
+            }
+            if (x != 2 & x != 9)
+            {
+                validMoveList = addValidMove(x + 1, y, validMoveList);
+            }
+            if (x != 0 & x != 7)
+            {
+                validMoveList = addValidMove(x - 1, y, validMoveList);
+            }
 
             return validMoveList;
         }
     }
-    
+
 }

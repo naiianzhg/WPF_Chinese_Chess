@@ -127,7 +127,7 @@ namespace ChineseChess_G1
         private void drawValidMove()
         {
             // calculate the valid move of the chosen piece
-            List<int> validMoves = Board.pieces[Board.getLastOriLocation()[0], Board.getLastOriLocation()[1]].validMoveList;
+            List<int> validMoves = Board.pieces[Board.getLastOriLocation()[0], Board.getLastOriLocation()[1]].calculateValidMoveList(Board.getLastOriLocation());
             foreach (int validMove in validMoves)
             {
                 // the valid move location (x,y) is corresponding to the index 9*x+y of the chess panel's grid
@@ -199,7 +199,7 @@ namespace ChineseChess_G1
                 mediaPlayer.Pause();
 
                 changeGameStatus(GameStatus.TO_CHOOSE);
-                // able to click
+                // Enable buttons
                 chessPanel.Cursor = Cursors.Arrow;
                 btnWithdraw.Cursor = Cursors.Arrow;
                 btnRegret.Cursor = Cursors.Arrow;
@@ -392,16 +392,18 @@ namespace ChineseChess_G1
         // TODO
         async Task putTaskDelay()
         {
-            await Task.Delay(1500);
+            await Task.Delay(500);
         }
         private async void btnPlay_Click(object sender, RoutedEventArgs e)
-        {   
-            if (manual == null) MessageBox.Show("You did not import any chess manual", "Invalid operation", MessageBoxButton.OK, MessageBoxImage.Error);
+        {
+            if (Board.manualOriLocationList.Count == 0) MessageBox.Show("You did not import any chess manual", "Invalid operation", MessageBoxButton.OK, MessageBoxImage.Error);
             else
             {
-                // Disable buttons
-                btnWithdraw.Cursor = Cursors.No;
-                btnRegret.Cursor = Cursors.No;
+                // disable play button
+                btnPlay.IsEnabled = false;
+                btnPlay.Content = "Playing..";
+                // disable open button
+                btnOpen.IsEnabled = false;
 
                 int[] manualOriLocation = new int[2], manualDestLocation = new int[2];
                 // Automatical move
@@ -411,6 +413,14 @@ namespace ChineseChess_G1
                     manualDestLocation[0] = Board.manualDestLocationList[i] / 10; manualDestLocation[1] = Board.manualDestLocationList[i] % 10;
                     // Save this chosen original location as last original location
                     Board.addLastOriLocation(manualOriLocation);
+
+                    // Choose simulation
+                    // Choose sound effect
+                    mediaPlayer.Open(new Uri(Board.pieces[manualOriLocation[0], manualOriLocation[1]].chooseSoundUrl, UriKind.RelativeOrAbsolute));
+                    mediaPlayer.Play();
+                    drawValidMove();
+                    await putTaskDelay();
+
                     // Move sound effect
                     mediaPlayer.Open(new Uri(Board.pieces[manualOriLocation[0], manualOriLocation[1]].moveSoundUrl, UriKind.RelativeOrAbsolute));
                     mediaPlayer.Play();
@@ -424,12 +434,11 @@ namespace ChineseChess_G1
                     }
                     await putTaskDelay();
                 }
+
+                btnPlay.Content = "Reload Maunal";
+                //Enable open button
+                btnOpen.IsEnabled = true;
             }
-        }
-
-        private void btnSave_Click(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void btnOpen_Click(object sender, RoutedEventArgs e)
@@ -444,13 +453,24 @@ namespace ChineseChess_G1
                 // Re-draw all the pieces in the board on the panel
                 redrawPieces();
 
-                changeGameStatus(GameStatus.MANUAL_MODE);
-                chessPanel.Cursor = Cursors.No;
                 OpenFileDialog openFileDialog = new OpenFileDialog();
                 openFileDialog.Filter = "Manual text files (*.txt)|*.txt|All files (*.*)|*.*";
                 openFileDialog.InitialDirectory = @"c:\Users\";
                 if (openFileDialog.ShowDialog() == true)
                 {
+                    changeGameStatus(GameStatus.MANUAL_MODE);
+
+                    // Enable play button
+                    btnPlay.IsEnabled = true;
+                    btnPlay.Cursor = Cursors.Arrow;
+                    btnPlay.Content = "Play Manual";
+
+                    // Disable panel
+                    chessPanel.Cursor = Cursors.No;
+                    // Disable function buttons
+                    btnWithdraw.Cursor = Cursors.No;
+                    btnRegret.Cursor = Cursors.No;
+
                     txtblkUrl.SetValue(VisibilityProperty, Visibility.Visible);
                     txtblkUrl.Text = openFileDialog.FileName;
                     manual = File.ReadAllText(openFileDialog.FileName);
@@ -461,10 +481,21 @@ namespace ChineseChess_G1
                     }
                     catch (Exception)
                     {
+                        changeGameStatus(GameStatus.TO_CHOOSE);
+                        // Enable panel
+                        chessPanel.Cursor = Cursors.Arrow;
+                        // Enable function buttons
+                        btnWithdraw.Cursor = Cursors.Arrow;
+                        btnRegret.Cursor = Cursors.Arrow;
+
                         MessageBox.Show("Please open the right manual file", "Incorrect manual", MessageBoxButton.OK, MessageBoxImage.Error);
                         manual = null;
                         txtblkUrl.SetValue(VisibilityProperty, Visibility.Collapsed);
                     }
+                }
+                else
+                {
+                    txtblkUrl.SetValue(VisibilityProperty, Visibility.Collapsed);
                 }
             }
         }
