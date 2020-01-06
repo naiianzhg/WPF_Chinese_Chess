@@ -271,13 +271,14 @@ namespace ChineseChess_G1
 
         private void btnRegret_Click(object sender, RoutedEventArgs e)
         {
-            if (gameStatus == GameStatus.TO_CHOOSE || gameStatus == GameStatus.GAME_OVER)
+            if (gameStatus != GameStatus.MANUAL_MODE)
             {
                 timeCounter.Stop();
                 if (MessageBox.Show("Are you sure?", "Regret Move", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     try
                     {
+                        if (gameStatus == GameStatus.TO_MOVE) Board.removeLastOriLocation();
                         PiecesHandler.regret();
                         // Set game status to TO_CHOOSE
                         changeGameStatus(GameStatus.TO_CHOOSE);
@@ -302,7 +303,7 @@ namespace ChineseChess_G1
                         MessageBox.Show(excp.Message, "Invalid operation", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
-                else { if (gameStatus != GameStatus.MANUAL_MODE) timeCounter.Start(); }
+                else timeCounter.Start();
             }
         }
 
@@ -325,7 +326,6 @@ namespace ChineseChess_G1
                         mediaPlayer.Play();
                         drawValidMove();
                         changeGameStatus(GameStatus.TO_MOVE);
-                        btnRegret.Cursor = Cursors.No;
                         break;
                     case GameStatus.TO_MOVE:
                         // If the player clicks another piece in his own team, consider he try to change another piece to move
