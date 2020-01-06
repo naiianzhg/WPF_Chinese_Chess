@@ -247,7 +247,7 @@ namespace ChineseChess_G1
                 {
                     try
                     {
-                        GameRules.withdraw();
+                        PiecesHandler.withdraw();
                         // Set game status to TO_CHOOSE
                         changeGameStatus(GameStatus.TO_CHOOSE);
                         // If the player regrets from the checkmate situation, change the cursor back to defaut
@@ -278,7 +278,7 @@ namespace ChineseChess_G1
                 {
                     try
                     {
-                        GameRules.regret();
+                        PiecesHandler.regret();
                         // Set game status to TO_CHOOSE
                         changeGameStatus(GameStatus.TO_CHOOSE);
                         // If the player regrets from the checkmate situation, change the cursor back to defaut
@@ -497,7 +497,7 @@ namespace ChineseChess_G1
                     try
                     {
                         // Read the moves from chess manual, stored in Board
-                        PiecesHandler.readManual(manual);
+                        Board.readManual(manual);
                     }
                     catch (Exception)
                     {
@@ -528,7 +528,7 @@ namespace ChineseChess_G1
 
         private void TimeCounter()
         {
-            remainTime = 10;
+            remainTime = 30;
             // Remove the last event or the event will be repeatly handled
             timeCounter.Tick -= timer_Tick;
             //for initial the counter value
@@ -590,7 +590,7 @@ namespace ChineseChess_G1
 
                     }                  
 
-                    MessageBox.Show("Your time ran out", "Time out remainder", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Your time ran out, the system play a random move for you", "Time out remainder", MessageBoxButton.OK, MessageBoxImage.Warning);
 
                 }
             }

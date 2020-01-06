@@ -142,6 +142,7 @@ namespace ChineseChess.Model
             if (lastEatenPieceList.Count > 0) lastEatenPieceList.RemoveAt(lastEatenPieceList.Count - 1);
         }
 
+        // Store all the pieces locations
         public static void piecesCollection()
         {
             redPieces = new List<int>();
@@ -173,6 +174,40 @@ namespace ChineseChess.Model
                     }
                 }
             }
+        }
+
+        // This method is to read the moves in the manual
+        public static void readManual(string manual)
+        {
+            string[] manualArr = manual.Split(' ');
+            List<int> oriLocationList = new List<int>();
+            List<int> destLocationList = new List<int>();
+            int oriLocation = 0, destLocation = 0;
+            int i = 0;
+            // Read from the manual all the original Location and destination Location
+            foreach (string str in manualArr)
+            {
+                switch (i % 10)
+                {
+                    case 5:
+                        oriLocation = (9 - Int32.Parse(str)) * 10;
+                        break;
+                    case 6:
+                        oriLocation += (8 - Int32.Parse(str));
+                        oriLocationList.Add(oriLocation);
+                        break;
+                    case 7:
+                        destLocation = (9 - Int32.Parse(str)) * 10;
+                        break;
+                    case 8:
+                        destLocation += (8 - Int32.Parse(str));
+                        destLocationList.Add(destLocation);
+                        break;
+                }
+                i++;
+            }
+            Board.manualOriLocationList = oriLocationList;
+            Board.manualDestLocationList = destLocationList;
         }
     }
 }

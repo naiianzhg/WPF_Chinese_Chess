@@ -61,55 +61,18 @@ namespace ChineseChess.Control
                             validMove = new int[] { validMoveList[i] / 10, validMoveList[i] % 10 };
                             // Assume the piece move to one of the validmove position, if any piece is eaten, store the piece so that it can be put back later
                             Pieces virtualEatenPiece = Board.pieces[validMove[0], validMove[1]];
-                            PiecesHandler.tracelessMoveTo(new int[] { row, col }, validMove);
+                            PiecesHandler.moveTo(new int[] { row, col }, validMove, 1);
                             isChkmt = isChecked();
-                            PiecesHandler.tracelessMoveTo(validMove, new int[] { row, col });
+                            PiecesHandler.moveTo(validMove, new int[] { row, col }, 1);
                             Board.pieces[validMove[0], validMove[1]] = virtualEatenPiece;
                             // if it is confirmed that there is no checkmate(able to avoid check) yet, no need for other traversal
-                            if(!isChkmt) return false;
+                            if (!isChkmt) return false;
                         }
                     }
                 }
             }
             return true;
 
-        }
-
-        // Withdraw move
-        public static void withdraw()
-        {
-            // If there is no pieces available for withdraw
-            if (Board.lastDestLocationList.Count == 0)
-                throw new Exception("You have no move to withdraw");
-            
-            // Move back the piece
-            PiecesHandler.tracelessMoveTo(Board.getLastDestLocation(), Board.getLastOriLocation());
-            // If there is an eaten piece, put it back to the board, else put null
-            Board.pieces[Board.getLastDestLocation()[0], Board.getLastDestLocation()[1]] = Board.getLastEatenPiece();
-            // Remove the last element of lastOriLocationList, lastDestLocationList and lastEatenPieceList after regret
-            Board.removeLastOriLocation();
-            Board.removeLastDestLocation();
-            Board.removeLastEatenPiece();
-
-            // Change back the turn
-            Board.currentColour--;
-        }
-
-        // Regret
-        public static void regret()
-        {
-            // If there is no pieces available for withdraw
-            if (Board.lastDestLocationList.Count < 2)
-                throw new Exception("You have no move to regret");
-            // If there is no more chances for the player to regret
-            if (Board.regretAmount[Board.currentColour % 2] == 0)
-                throw new Exception("You have no chance to regret");
-
-            withdraw();
-            withdraw();
-
-            // Reduce of regret chance by 1
-            Board.regretAmount[Board.currentColour % 2]--;
         }
     }
 }

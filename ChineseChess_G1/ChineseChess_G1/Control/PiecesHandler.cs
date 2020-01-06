@@ -65,66 +65,61 @@ namespace ChineseChess.Control
             bool isDangerous = false;
             // Assume the piece move to the chosen destination, if any piece is eaten, store the piece so that it can be put back later
             Pieces virtualEatenPiece = Board.pieces[row, col];
-            tracelessMoveTo(Board.getLastOriLocation(), new int[] { row, col });
+            moveTo(Board.getLastOriLocation(), new int[] { row, col }, 1);
             // If a team will be checked after moving and it is its turn at the same time, the player need to confirme the dangerous move
             if (GameRules.isChecked()) isDangerous = true;
             // Move the piece back to original position to continue
-            tracelessMoveTo(new int[] { row, col }, Board.getLastOriLocation());
+            moveTo(new int[] { row, col }, Board.getLastOriLocation(), 1);
             Board.pieces[row, col] = virtualEatenPiece;
             return isDangerous;
         }
 
-        // The real moving operation, the eaten piece will be stored
-        public static void moveTo(int[] oriLocation, int[] destLocation)
+        // The real moving operation, the eaten piece will be stored, * parametre i is marked for move with storing eaten piece location caused by a move, and i is set to 0 by defaut, if i == 1 the eaten piece will not be stored *
+        public static void moveTo(int[] oriLocation, int[] destLocation, int i = 0)
         {
             // If there is a piece in destLocation which will be eaten, store its position else store null
-            Board.addLastEatenPiece(Board.pieces[destLocation[0], destLocation[1]]);
+            if (i == 0) Board.addLastEatenPiece(Board.pieces[destLocation[0], destLocation[1]]);
             // Move the chosen piece to the destination and reset the original position to null
             Board.pieces[destLocation[0], destLocation[1]] = Board.pieces[oriLocation[0], oriLocation[1]];
             Board.pieces[oriLocation[0], oriLocation[1]] = null;
             Board.piecesCollection();
         }
-
-        // This virtualMoveTo method is for calculating dangerous move or regret move back, there is no eaten piece storing inside so that it is called traceless
-        public static void tracelessMoveTo(int[] oriLocation, int[] destLocation)
+        
+        // Withdraw move
+        public static void withdraw()
         {
-            // Move the chosen piece to the destination and reset the original position to null
-            Board.pieces[destLocation[0], destLocation[1]] = Board.pieces[oriLocation[0], oriLocation[1]];
-            Board.pieces[oriLocation[0], oriLocation[1]] = null;
+            // If there is no pieces available for withdraw
+            if (Board.lastDestLocationList.Count == 0)
+                throw new Exception("You have no move to withdraw");
+
+            // Move back the piece
+            PiecesHandler.moveTo(Board.getLastDestLocation(), Board.getLastOriLocation(), 1);
+            // If there is an eaten piece, put it back to the board, else put null
+            Board.pieces[Board.getLastDestLocation()[0], Board.getLastDestLocation()[1]] = Board.getLastEatenPiece();
+            // Remove the last element of lastOriLocationList, lastDestLocationList and lastEatenPieceList after regret
+            Board.removeLastOriLocation();
+            Board.removeLastDestLocation();
+            Board.removeLastEatenPiece();
+
+            // Change back the turn
+            Board.currentColour--;
         }
 
-        // This method is to read the moves in the manual
-        public static void readManual(string manual)
+        // Regret move
+        public static void regret()
         {
-            string[] manualArr = manual.Split(' ');
-            List<int> oriLocationList = new List<int>();
-            List<int> destLocationList = new List<int>();
-            int oriLocation = 0, destLocation = 0;
-            int i = 0;
-            // Read from the manual all the original Location and destination Location
-            foreach (string str in manualArr)
-            {
-                switch (i % 10)
-                {
-                    case 5:
-                        oriLocation = (9 - Int32.Parse(str)) * 10;
-                        break;
-                    case 6:
-                        oriLocation += (8 - Int32.Parse(str));
-                        oriLocationList.Add(oriLocation);
-                        break;
-                    case 7:
-                        destLocation = (9 - Int32.Parse(str)) * 10;
-                        break;
-                    case 8:
-                        destLocation += (8 - Int32.Parse(str));
-                        destLocationList.Add(destLocation);
-                        break;
-                }
-                i++;
-            }
-            Board.manualOriLocationList = oriLocationList;
-            Board.manualDestLocationList = destLocationList;
+            // If there is no pieces available for withdraw
+            if (Board.lastDestLocationList.Count < 2)
+                throw new Exception("You have no move to regret");
+            // If there is no more chances for the player to regret
+            if (Board.regretAmount[Board.currentColour % 2] == 0)
+                throw new Exception("You have no chance to regret");
+
+            withdraw();
+            withdraw();
+
+            // Reduce of regret chance by 1
+            Board.regretAmount[Board.currentColour % 2]--;
         }
 
         // When time runs out, automatically move for the player
@@ -144,6 +139,7 @@ namespace ChineseChess.Control
             int j = rd.Next(canMove.Count - 1);
             chooseDest(canMove[j] / 10, canMove[j] % 10);
         }
+
     }
 }
     
