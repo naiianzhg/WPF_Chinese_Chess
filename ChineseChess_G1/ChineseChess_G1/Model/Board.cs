@@ -187,6 +187,7 @@ namespace ChineseChess.Model
             // Read from the manual all the original Location and destination Location
             foreach (string str in manualArr)
             {
+                Int32.Parse(str);
                 switch (i % 10)
                 {
                     case 5:
