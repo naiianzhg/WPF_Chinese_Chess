@@ -35,7 +35,8 @@
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
-            </Setter>            
+            </Setter>
+            
         </Style>
     </Application.Resources>
 </Application>

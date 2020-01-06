@@ -28,6 +28,7 @@
     <None Remove="Resources\BlackHorse.png" />
     <None Remove="Resources\BlackRook.png" />
     <None Remove="Resources\BlackSoldier.png" />
+    <None Remove="Resources\boarder.png" />
     <None Remove="Resources\btnBackground.png" />
     <None Remove="Resources\chooseAdvisor.mp3" />
     <None Remove="Resources\chooseCannon.mp3" />
@@ -55,6 +56,7 @@
     <None Remove="Resources\RedHorse.png" />
     <None Remove="Resources\RedRook.png" />
     <None Remove="Resources\RedSoldier.png" />
+    <None Remove="Resources\Timeout.mp3" />
     <None Remove="Resources\ValidMoveBox.png" />
     <None Remove="Resources\win.mp3" />
   </ItemGroup>
@@ -73,6 +75,7 @@
     <Resource Include="Resources\BlackHorse.png" />
     <Resource Include="Resources\BlackRook.png" />
     <Resource Include="Resources\BlackSoldier.png" />
+    <Resource Include="Resources\boarder.png" />
     <Resource Include="Resources\btnBackground.png" />
     <Content Include="Resources\chooseAdvisor.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -96,6 +99,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\chooseSoldier.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Timeout.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="Resources\Logo.png" />

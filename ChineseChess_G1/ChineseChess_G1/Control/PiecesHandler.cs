@@ -128,7 +128,7 @@ namespace ChineseChess.Control
         }
 
         // When time runs out, automatically move for the player
-        public void randomMove()
+        public static void randomMove()
         {
             List<int> canChoose, canMove;
             if (Board.currentColour % 2 == 0) { canChoose = Board.blkPieces; }
@@ -137,12 +137,13 @@ namespace ChineseChess.Control
             int i = rd.Next(canChoose.Count - 1);
             int x = canChoose[i] / 10;
             int y = canChoose[i] % 10;
+            if (Board.lastOriLocationList.Count != Board.lastDestLocationList.Count) Board.removeLastOriLocation();
             // Save this chosen original location as last original location
             chooseOri(x, y);
             canMove = Board.pieces[x, y].calculateValidMoveList(new int[] { x, y });
             int j = rd.Next(canMove.Count - 1);
             chooseDest(canMove[j] / 10, canMove[j] % 10);
-            // TODO: xaml.cs catch the suicide move exception, continue do the move, and show that the other team wins
         }
     }
 }
+    

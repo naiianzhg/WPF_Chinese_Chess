@@ -52,15 +52,15 @@ namespace ChineseChess.Model
             // Initialize the valideMove List
             validMoveList = new List<int>();
 
-            if (colour % 2 == 0 & x < 9)
+            if (colour == 0 & x < 9)
             {
                 validMoveList = addValidMove(x + 1, y, validMoveList);
             }
-            if (colour % 2 == 1 & x > 0)
+            if (colour == 1 & x > 0)
             {
                 validMoveList = addValidMove(x - 1, y, validMoveList);
             }
-            if ((colour % 2 == 1 & x < 5) | (colour % 2 == 0 & x > 4))
+            if ((colour == 1 & x < 5) | (colour % 2 == 0 & x > 4))
             {
                 if (y != 0)
                 {
@@ -192,25 +192,27 @@ namespace ChineseChess.Model
             // Initialize the valideMove List
             validMoveList = new List<int>();
             for (int i = 1; i <= x; i++)
-            {
-                if (Board.pieces[x - i, y] != null) break;
+            {              
                 validMoveList = addValidMove(x - i, y, validMoveList);
+                if (Board.pieces[x - i, y] != null) break;
             }
             for (int i = 1; i <= 9 - x; i++)
             {
-                if (Board.pieces[x + i, y] != null) break;
+                
                 validMoveList = addValidMove(x + i, y, validMoveList);
-
+                if (Board.pieces[x + i, y] != null) break;
             }
             for (int i = 1; i <= y; i++)
             {
-                if (Board.pieces[x, y - i] != null) break;
+                
                 validMoveList = addValidMove(x, y - i, validMoveList);
+                if (Board.pieces[x, y - i] != null) break;
             }
             for (int i = 1; i <= 8 - y; i++)
             {
-                if (Board.pieces[x, y + i] != null) break;
                 validMoveList = addValidMove(x, y + i, validMoveList);
+                if (Board.pieces[x, y + i] != null) break;
+
             }
 
             return validMoveList;
@@ -372,7 +374,7 @@ namespace ChineseChess.Model
                 {
                     foreach (int j in a)
                     {
-                        validMoveList = addValidMove(x + i, y + i, validMoveList);
+                        validMoveList = addValidMove(x + i, y + j, validMoveList);
                     }
                 }
             }

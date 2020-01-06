@@ -16,6 +16,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ChineseChess.Model;
 using ChineseChess.Control;
+using System.Windows.Threading;
+using System.Threading;
 
 namespace ChineseChess_G1
 {
@@ -60,6 +62,10 @@ namespace ChineseChess_G1
 
         // MediaPlayer to play sound effect
         private MediaPlayer mediaPlayer = new MediaPlayer();
+
+        // for the timeCounter
+        private DispatcherTimer timeCounter = new DispatcherTimer();
+        int remainTime;
 
         public MainWindow()
         {
@@ -155,11 +161,13 @@ namespace ChineseChess_G1
             txtblkCrrClr.SetValue(VisibilityProperty, Visibility.Visible);
             if (Board.currentColour % 2 == 0)
             {
+                TimeCounter();
                 txtblkCrrClr.Text = "Black's Move";
                 txtblkCrrClr.Background = Brushes.Black;
             }
             else
             {
+                TimeCounter();
                 txtblkCrrClr.Text = "Red's Move";
                 txtblkCrrClr.Background = Brushes.Red;
             }
@@ -175,13 +183,18 @@ namespace ChineseChess_G1
             // appear the withdraw button, regret button, restart button as well as disappear the start button
             btnStart.SetValue(VisibilityProperty, Visibility.Collapsed);
             btnRestart.SetValue(VisibilityProperty, Visibility.Visible);
-            btnWithdraw.SetValue(VisibilityProperty, Visibility.Visible);
             btnRegret.SetValue(VisibilityProperty, Visibility.Visible);
+
+            // Play manual button content
+            btnPlay.IsEnabled = false;
+            btnPlay.Content = "Load Manual";
+
             // Re-draw the chances left on the regret button
             btnRegret.Content =
                 Board.currentColour % 2 == 0 ?
                 $"Regret of Black({Board.regretAmount[Board.currentColour % 2]})" :
                 $"Regret of Red({Board.regretAmount[Board.currentColour % 2]})";
+
             // appear the manual demo mode options
             ManualDemo.SetValue(VisibilityProperty, Visibility.Visible);
             // appear the game message
@@ -193,18 +206,22 @@ namespace ChineseChess_G1
         // Restart button click event handle
         private void btnRestart_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Are you sure?", "Restart Game", MessageBoxButton.YesNo,MessageBoxImage.Question) == MessageBoxResult.Yes)
+            timeCounter.Stop();
+            if (MessageBox.Show("Are you sure?", "Restart Game", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
+                changeGameStatus(GameStatus.TO_CHOOSE);
+
+                URL.SetValue(VisibilityProperty, Visibility.Collapsed);
+                Message.SetValue(VisibilityProperty, Visibility.Visible);
                 // pause the win sound
                 mediaPlayer.Pause();
 
-                changeGameStatus(GameStatus.TO_CHOOSE);
                 // Enable buttons
                 chessPanel.Cursor = Cursors.Arrow;
-                btnWithdraw.Cursor = Cursors.Arrow;
                 btnRegret.Cursor = Cursors.Arrow;
-                // Re-initialization of the game data only
+
                 GameRules.iniGame();
+
                 // Re-set the manual demo mode
                 manual = null;
                 txtblkUrl.SetValue(VisibilityProperty, Visibility.Collapsed);
@@ -218,6 +235,7 @@ namespace ChineseChess_G1
                 // Re-draw all the pieces in the board on the panel
                 redrawPieces();
             }
+            else { if (gameStatus != GameStatus.MANUAL_MODE) timeCounter.Start(); }
         }
 
         // Withdraw button click event handle
@@ -255,6 +273,7 @@ namespace ChineseChess_G1
         {
             if (gameStatus == GameStatus.TO_CHOOSE || gameStatus == GameStatus.GAME_OVER)
             {
+                timeCounter.Stop();
                 if (MessageBox.Show("Are you sure?", "Regret Move", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     try
@@ -283,6 +302,7 @@ namespace ChineseChess_G1
                         MessageBox.Show(excp.Message, "Invalid operation", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
+                else { if (gameStatus != GameStatus.MANUAL_MODE) timeCounter.Start(); }
             }
         }
 
@@ -292,7 +312,7 @@ namespace ChineseChess_G1
             int imgRow = (int)(((Image)sender).GetValue(chessBoardRowProperty));
             int imgCol = (int)(((Image)sender).GetValue(chessBoardColProperty));
 
-            txtblkMessage.Text = "Click location: " + imgRow.ToString() + "," + imgCol.ToString();
+            txtblkMessage.Text = "Click Location: " + imgRow.ToString() + "," + imgCol.ToString();
 
             try
             {
@@ -305,7 +325,6 @@ namespace ChineseChess_G1
                         mediaPlayer.Play();
                         drawValidMove();
                         changeGameStatus(GameStatus.TO_MOVE);
-                        btnWithdraw.Cursor = Cursors.No;
                         btnRegret.Cursor = Cursors.No;
                         break;
                     case GameStatus.TO_MOVE:
@@ -354,7 +373,7 @@ namespace ChineseChess_G1
                                 // Win sound effect
                                 mediaPlayer.Open(new Uri("Resources/win.mp3", UriKind.RelativeOrAbsolute));
                                 mediaPlayer.Play();
-                                btnWithdraw.Cursor = Cursors.Arrow;
+                                timeCounter.Stop();
                                 btnRegret.Cursor = Cursors.Arrow;
                                 chessPanel.Cursor = Cursors.No;
                                 break;
@@ -367,7 +386,6 @@ namespace ChineseChess_G1
                                else if (Board.currentColour % 2 == 1) MessageBox.Show("Red is checked", "Danger", MessageBoxButton.OK, MessageBoxImage.Warning);
                             }
                             changeGameStatus(GameStatus.TO_CHOOSE);
-                            btnWithdraw.Cursor = Cursors.Arrow;
                             btnRegret.Cursor = Cursors.Arrow;
                             break;
                         }
@@ -377,7 +395,6 @@ namespace ChineseChess_G1
             {
                 MessageBox.Show(excp.Message, "Invalid move", MessageBoxButton.OK, MessageBoxImage.Error);
                 changeGameStatus(GameStatus.TO_CHOOSE);
-                btnWithdraw.Cursor = Cursors.Arrow;
                 btnRegret.Cursor = Cursors.Arrow;
                 redrawPieces();
                 // Indicate the origin location with a blue box
@@ -389,75 +406,79 @@ namespace ChineseChess_G1
             }
         }
 
-        // TODO
-        async Task putTaskDelay()
+        // Suspension
+        async Task putPlayTaskDelay()
         {
-            await Task.Delay(500);
+            await Task.Delay(800);
         }
         private async void btnPlay_Click(object sender, RoutedEventArgs e)
         {
-            if (Board.manualOriLocationList.Count == 0) MessageBox.Show("You did not import any chess manual", "Invalid operation", MessageBoxButton.OK, MessageBoxImage.Error);
-            else
+            timeCounter.Stop();
+
+            // disable play button
+            btnPlay.IsEnabled = false;
+            btnPlay.Content = "Playing..";
+            // disable open button
+            btnOpen.IsEnabled = false;
+            btnOpen.Content = "Waiting..";
+
+            int[] manualOriLocation = new int[2], manualDestLocation = new int[2];
+            // Automatical move
+            for (int i = 0; i < Board.manualOriLocationList.Count; i++)
             {
-                // disable play button
-                btnPlay.IsEnabled = false;
-                btnPlay.Content = "Playing..";
-                // disable open button
-                btnOpen.IsEnabled = false;
+                manualOriLocation[0] = Board.manualOriLocationList[i] / 10; manualOriLocation[1] = Board.manualOriLocationList[i] % 10;
+                manualDestLocation[0] = Board.manualDestLocationList[i] / 10; manualDestLocation[1] = Board.manualDestLocationList[i] % 10;
+                // Save this chosen original location as last original location
+                Board.addLastOriLocation(manualOriLocation);
 
-                int[] manualOriLocation = new int[2], manualDestLocation = new int[2];
-                // Automatical move
-                for (int i = 0; i < Board.manualOriLocationList.Count; i++)
+                // Choose simulation
+                // Choose sound effect
+                mediaPlayer.Open(new Uri(Board.pieces[manualOriLocation[0], manualOriLocation[1]].chooseSoundUrl, UriKind.RelativeOrAbsolute));
+                mediaPlayer.Play();
+                drawValidMove();
+                await putPlayTaskDelay();
+
+                if (gameStatus == GameStatus.TO_CHOOSE) break;
+
+                // Move sound effect
+                mediaPlayer.Open(new Uri(Board.pieces[manualOriLocation[0], manualOriLocation[1]].moveSoundUrl, UriKind.RelativeOrAbsolute));
+                mediaPlayer.Play();
+                PiecesHandler.moveTo(manualOriLocation, manualDestLocation);
+                redrawPieces();
+                // Indicate the origin location with a blue box
+                if (Board.lastOriLocationList.Count > 0)
                 {
-                    manualOriLocation[0] = Board.manualOriLocationList[i] / 10; manualOriLocation[1] = Board.manualOriLocationList[i] % 10;
-                    manualDestLocation[0] = Board.manualDestLocationList[i] / 10; manualDestLocation[1] = Board.manualDestLocationList[i] % 10;
-                    // Save this chosen original location as last original location
-                    Board.addLastOriLocation(manualOriLocation);
-
-                    // Choose simulation
-                    // Choose sound effect
-                    mediaPlayer.Open(new Uri(Board.pieces[manualOriLocation[0], manualOriLocation[1]].chooseSoundUrl, UriKind.RelativeOrAbsolute));
-                    mediaPlayer.Play();
-                    drawValidMove();
-                    await putTaskDelay();
-
-                    // Move sound effect
-                    mediaPlayer.Open(new Uri(Board.pieces[manualOriLocation[0], manualOriLocation[1]].moveSoundUrl, UriKind.RelativeOrAbsolute));
-                    mediaPlayer.Play();
-                    PiecesHandler.moveTo(manualOriLocation, manualDestLocation);
-                    redrawPieces();
-                    // Indicate the origin location with a blue box
-                    if (Board.lastOriLocationList.Count > 0)
-                    {
-                        Image oriLocationImg = (Image)chessPanel.Children[9 * Board.getLastOriLocation()[0] + Board.getLastOriLocation()[1]];
-                        oriLocationImg.Source = new BitmapImage(new Uri("Resources/OriLocationBox.png", UriKind.RelativeOrAbsolute));
-                    }
-                    await putTaskDelay();
+                    Image oriLocationImg = (Image)chessPanel.Children[9 * Board.getLastOriLocation()[0] + Board.getLastOriLocation()[1]];
+                    oriLocationImg.Source = new BitmapImage(new Uri("Resources/OriLocationBox.png", UriKind.RelativeOrAbsolute));
                 }
-
-                btnPlay.Content = "Reload Maunal";
-                //Enable open button
-                btnOpen.IsEnabled = true;
+                await putPlayTaskDelay();
             }
+
+            btnPlay.Content = "Reload Maunal";
+            //Enable open button
+            btnOpen.IsEnabled = true;
+            btnOpen.Content = "Open Manual";
         }
 
         private void btnOpen_Click(object sender, RoutedEventArgs e)
         {
+            timeCounter.Stop();
             if (MessageBox.Show("This operation will clear the current game, are you sure?", "Manual demo mode", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                // RE-INITIALIZATION CHESS BOARD
-                // Re-initialization of the game data only
-                GameRules.iniGame();
-                // Re-draw the current colour
-                redrawCurrenColour();
-                // Re-draw all the pieces in the board on the panel
-                redrawPieces();
-
                 OpenFileDialog openFileDialog = new OpenFileDialog();
                 openFileDialog.Filter = "Manual text files (*.txt)|*.txt|All files (*.*)|*.*";
                 openFileDialog.InitialDirectory = @"c:\Users\";
                 if (openFileDialog.ShowDialog() == true)
                 {
+                    // RE-INITIALIZATION CHESS BOARD
+                    // Re-initialization of the game data only
+                    GameRules.iniGame();
+                    // Re-draw all the pieces in the board on the panel
+                    redrawPieces();
+
+                    URL.SetValue(VisibilityProperty, Visibility.Visible);
+                    Message.SetValue(VisibilityProperty, Visibility.Collapsed);
+                    timeCounter.Stop();
                     changeGameStatus(GameStatus.MANUAL_MODE);
 
                     // Enable play button
@@ -468,7 +489,6 @@ namespace ChineseChess_G1
                     // Disable panel
                     chessPanel.Cursor = Cursors.No;
                     // Disable function buttons
-                    btnWithdraw.Cursor = Cursors.No;
                     btnRegret.Cursor = Cursors.No;
 
                     txtblkUrl.SetValue(VisibilityProperty, Visibility.Visible);
@@ -485,17 +505,93 @@ namespace ChineseChess_G1
                         // Enable panel
                         chessPanel.Cursor = Cursors.Arrow;
                         // Enable function buttons
-                        btnWithdraw.Cursor = Cursors.Arrow;
                         btnRegret.Cursor = Cursors.Arrow;
+
+                        // Play manual button content
+                        btnPlay.IsEnabled = false;
+                        btnPlay.Content = "Load Manual";
 
                         MessageBox.Show("Please open the right manual file", "Incorrect manual", MessageBoxButton.OK, MessageBoxImage.Error);
                         manual = null;
-                        txtblkUrl.SetValue(VisibilityProperty, Visibility.Collapsed);
+                        URL.SetValue(VisibilityProperty, Visibility.Collapsed);
+                        Message.SetValue(VisibilityProperty, Visibility.Visible);
+                        timeCounter.Start();
                     }
                 }
                 else
                 {
-                    txtblkUrl.SetValue(VisibilityProperty, Visibility.Collapsed);
+                    if (gameStatus != GameStatus.MANUAL_MODE) timeCounter.Start();
+                }
+            }
+            else { if (gameStatus != GameStatus.MANUAL_MODE) timeCounter.Start(); }
+        }
+
+        private void TimeCounter()
+        {
+            remainTime = 10;
+            // Remove the last event or the event will be repeatly handled
+            timeCounter.Tick -= timer_Tick;
+            //for initial the counter value
+            txtblkTimer.FontSize = 20;
+            TimerR.Padding = new Thickness(0, 1, 0, 0);
+            TimerS.Padding = new Thickness(0, 1, 0, 0);
+            txtblkTimer.Foreground = Brushes.Black;
+            txtblkTimer.Text = $"{remainTime}";
+            //set the span of the counter as 1 second
+            timeCounter.Interval = TimeSpan.FromSeconds(1);
+            //every span (per second) will execut the timer_Tick event
+            timeCounter.Tick += timer_Tick;
+            if (gameStatus != GameStatus.MANUAL_MODE) timeCounter.Start();
+        }
+
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            remainTime--;
+            txtblkTimer.Text = $"{remainTime}";
+
+            //3 seconds before time out 
+            if (remainTime < 3)
+            {
+                if (remainTime == 2)
+                {
+                    mediaPlayer.Open(new Uri("Resources/Timeout.mp3", UriKind.Relative));
+                    mediaPlayer.Play();
+                }
+                TimerR.Padding= new Thickness(0,11,0,0);
+                TimerS.Padding= new Thickness(0,11,0,0);
+                txtblkTimer.FontSize = 30;
+                txtblkTimer.Foreground = Brushes.Red;
+                //Time out
+                if (remainTime == 0)
+                {
+                    try
+                    {
+                        PiecesHandler.randomMove();
+                        mediaPlayer.Open(new Uri(Board.pieces[Board.getLastDestLocation()[0], Board.getLastDestLocation()[1]].moveSoundUrl, UriKind.RelativeOrAbsolute));
+                        mediaPlayer.Play();
+                        redrawPieces();
+                        Image oriLocationImg = (Image)chessPanel.Children[9 * Board.getLastOriLocation()[0] + Board.getLastOriLocation()[1]];
+                        oriLocationImg.Source = new BitmapImage(new Uri("Resources/OriLocationBox.png", UriKind.RelativeOrAbsolute));
+                        redrawCurrenColour();
+                        changeGameStatus(GameStatus.TO_CHOOSE);
+                        btnRegret.Cursor = Cursors.Arrow;
+                    }
+                    catch (Exception)
+                    {
+                        PiecesHandler.moveTo(Board.getLastOriLocation(), Board.getLastDestLocation());
+                        mediaPlayer.Open(new Uri(Board.pieces[Board.getLastDestLocation()[0], Board.getLastDestLocation()[1]].moveSoundUrl, UriKind.RelativeOrAbsolute));
+                        mediaPlayer.Play();
+                        redrawPieces();
+                        Image oriLocationImg = (Image)chessPanel.Children[9 * Board.getLastOriLocation()[0] + Board.getLastOriLocation()[1]];
+                        oriLocationImg.Source = new BitmapImage(new Uri("Resources/OriLocationBox.png", UriKind.RelativeOrAbsolute));
+                        redrawCurrenColour();
+                        MessageBox.Show("You lost because of random move!", "GAME OVER", MessageBoxButton.OK, MessageBoxImage.Information);
+                        changeGameStatus(GameStatus.GAME_OVER);
+
+                    }                  
+
+                    MessageBox.Show("Your time ran out", "Time out remainder", MessageBoxButton.OK, MessageBoxImage.Warning);
+
                 }
             }
         }

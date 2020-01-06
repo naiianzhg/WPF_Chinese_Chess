@@ -45,8 +45,9 @@ namespace ChineseChess.Model
             regretAmount = new int[] { 3, 3 };
             manualOriLocationList = new List<int>();
             manualDestLocationList = new List<int>();
-            blkGeneralPosition = new int[2] { 0, 4 };
-            redGeneralPosition = new int[2] { 9, 4 };
+            redGeneralPosition = new int[2];
+            blkGeneralPosition = new int[2];
+
             // Initialize the pieces and store them in chess board
             int color = 0;
             for (int i = 0; i < 2; i++)
@@ -67,6 +68,8 @@ namespace ChineseChess.Model
                 color = 1;
             }
 
+            // Collect all pieces locations
+            Board.piecesCollection();
         }
 
         public static void iniChessBoard()
